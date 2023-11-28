@@ -2,12 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Button } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { IAppleUser } from '../../types/IAppleUser';
+import axios from "axios"
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../../navigation/Navigation';
+import { NativeStackScreenProps, NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type HomeProps = NativeStackScreenProps<RootStackParamList, 'signup'>
 
 export default function AppleSignUp(): JSX.Element{
     const [isAppleAvailable, setIsAppleAvailable] = useState<boolean>(false);
     const [appleCredentials, setAppleCredentials] = useState<IAppleUser>();
 
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     console.log("Apple credential state: ", appleCredentials)
+    //Check if sign up with apple is available on device
     useEffect(() => {
         async function checkIsAppleAvailable(): Promise<void>{
             const isAvailable = await AppleAuthentication.isAvailableAsync();
@@ -45,6 +53,9 @@ export default function AppleSignUp(): JSX.Element{
                 //     userId: credentials.user
                 // });
                 console.log("Palauttaa true")
+                navigation.navigate("createUsername", {
+                    userId: credentials.user
+                })
             } else {
                 console.log("Palauttaa false")
             }
@@ -57,6 +68,7 @@ export default function AppleSignUp(): JSX.Element{
         }
     };
 
+    //Check if user is apple user
     const getCredentialState = async (userId: string): Promise<boolean> => {
         const credentialState = await AppleAuthentication.getCredentialStateAsync(userId)
         if(credentialState === 1){

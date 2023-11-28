@@ -17,19 +17,37 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ckdev.foodi-app",
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": ["com.googleusercontent.apps.947120029998-k89t1g9d4nfkqpbat21lga82ohdsur3f"]
+          }
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.kekkuli.foodiapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-    "expo-apple-authentication", 
-    "@react-native-google-signin/google-signin"]
+      "expo-apple-authentication",
+      "@react-native-google-signin/google-signin"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "291cade7-10b4-489e-a71f-c2b460848956"
+      }
+    }
   }
 }

@@ -1,13 +1,17 @@
-import React from "react";
+import React, {useState} from "react";
 import { SafeAreaView, Text, TextInput, View, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons, AntDesign, Feather } from '@expo/vector-icons';
-import AppleSignUp from "./apple/AppleSignUp";
-import GoogleSignUp from "./google/GoogleSignUp";
+import AppleSignIn from "./apple/AppleSignIn";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/Navigation";
 
-export default function SignUp(): JSX.Element{
+export default function Login(): JSX.Element {
+    const [username, setUsername] = useState<string>("");
+    const authNav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     return(
         <SafeAreaView style={styles.container}>
-            <Text style={styles.headerText}>Create Account</Text>
+            <Text style={styles.headerText}>Login</Text>
             <View>
                 <View style={styles.inputCont}>
                     <AntDesign 
@@ -16,16 +20,11 @@ export default function SignUp(): JSX.Element{
                     color="#666"
                     style={styles.icon}
                      />
-                    <TextInput placeholder="Username" style={styles.inputField}/>
-                </View>
-                <View style={styles.inputCont}>
-                    <MaterialIcons 
-                    name="alternate-email" 
-                    size={20} 
-                    color="#666"
-                    style={styles.icon}
-                     />
-                    <TextInput placeholder="Email" style={styles.inputField}/>
+                    <TextInput 
+                    placeholder="Username" 
+                    style={styles.inputField}
+                    onChangeText={setUsername}
+                    />
                 </View>
                 <View style={styles.inputCont}>
                     <Feather 
@@ -36,19 +35,10 @@ export default function SignUp(): JSX.Element{
                      />
                     <TextInput placeholder="Password" style={styles.inputField}/>
                 </View>
-                <View style={styles.inputCont}>
-                    <Feather 
-                    name="lock" 
-                    size={20} 
-                    color="#666"
-                    style={styles.icon}
-                     />
-                    <TextInput placeholder="Confirm Password" style={styles.inputField}/>
-                </View>
             </View>
             <View>
                 <Pressable style={styles.signUpBtn}>
-                    <Text style={styles.signUpText}>Sign Up</Text>
+                    <Text style={styles.signUpText}>Login</Text>
                 </Pressable>
             </View>
             <View style={styles.dividerCont}>
@@ -57,18 +47,19 @@ export default function SignUp(): JSX.Element{
                 <View style={styles.dividerLine}/>
             </View>
             {/* Apple and Google buttons */}
-            <AppleSignUp />
+            <AppleSignIn />
             {/* <GoogleSignUp /> */}
-            
+                   
             <View style={styles.bottomTextCont}>
-                <Text style={{color: 'gray'}}>Already have an account?</Text>
-                <Pressable>
-                    <Text style={styles.signInText}>Sign In</Text>
+                <Text style={{color: 'gray'}}>Don't have an account yet?</Text>
+                <Pressable onPress={() => authNav.goBack()}>
+                    <Text style={styles.signInText}>Sign Up</Text>
                 </Pressable>
             </View>
         </SafeAreaView>
     )
 };
+
 
 const styles = StyleSheet.create({
     container: {
@@ -88,7 +79,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderBottomColor: '#ccc',
         borderBottomWidth: 1,
-        marginBottom: 26,
+        marginBottom: 36,
         width: 300,
     },
     headerText: {
