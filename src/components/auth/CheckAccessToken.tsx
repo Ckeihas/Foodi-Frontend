@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/Navigation";
 import { BottomTabParamList } from "../../navigation/BottomTabsNavigation";
+import { GetUserData } from "../../api/GetUserData";
 
 async function saveToSecureStorage(key: string, value: string): Promise<void> {
     await SecureStore.setItemAsync(key, value);
@@ -21,8 +22,9 @@ export async function CheckAccessToken(){
         axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
         await axios.post("http://192.168.1.103:3000/user/profile")
         .then(async response => {
-            const {username, error, message} = response.data;
+            const {username, error, message, id} = response.data;
             console.log("Onko username: ", username)
+            console.log("Onko id: ", id)
             if(error){
                 await axios.post("http://192.168.1.103:3000/new/new-access", {refreshToken: refreshToken})
                 .then(async res => {
@@ -32,9 +34,11 @@ export async function CheckAccessToken(){
                     saveToSecureStorage(newAccessToken, accessToken)
                     axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
                     //Tee uusi then koska tarvitsee lähettää uusi pyyntö serverille uudella access tokenilla jotta saat käyttäjän tiedot
+                    GetUserData();
                     navigation.navigate("home")
                     }).catch(err => {
                         console.log("Error in spalsh screen setting header and navigate home screen: ", err)
+                        navigation.navigate('login')
                     })
                     } else {
                         const {username, error, message} = response.data;

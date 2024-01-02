@@ -11,7 +11,7 @@ import * as SecureStore from 'expo-secure-store';
 type CreateUsernameProps = NativeStackScreenProps<RootStackParamList, 'createUsername'>
 export default function CreateUsername({route}: CreateUsernameProps): JSX.Element{
     const [username, setUsername] = useState<string>();
-    const { userId } = route.params;
+    const { userId, email, password } = route.params;
     
     async function saveToSecureStorage(key: string, value: string): Promise<void> {
         await SecureStore.setItemAsync(key, value);
@@ -40,6 +40,23 @@ export default function CreateUsername({route}: CreateUsernameProps): JSX.Elemen
             console.log("Error: ", err)
         }) 
     }
+
+    const handleEmail = (): void => {
+        const config = {
+            username: username,
+            email: email,
+            password: password
+        }
+
+        axios.post("http://192.168.1.103:3000/signup/email", {data: config}).then(resp => {
+            const accessToken = "AccessToken";
+            const refreshToken = "RefreshToken";
+            console.log("Tokenit: ", resp.data.accessToken)
+            saveToSecureStorage(accessToken, resp.data.accessToken)
+            saveRefreshToSecureStorage(refreshToken, resp.data.refreshToken)
+            navigation.navigate("home")
+        })
+    }
     return(
         <SafeAreaView style={styles.container}>
             <Text style={styles.headerText}>Create Username</Text>
@@ -56,7 +73,7 @@ export default function CreateUsername({route}: CreateUsernameProps): JSX.Elemen
                     onChangeText={setUsername}
                     />
                 </View>
-            <TouchableOpacity style={styles.btnCont} onPress={handlePress}>
+            <TouchableOpacity style={styles.btnCont} onPress={handleEmail}>
                 <Text style={styles.btnText}>Continue</Text>
             </TouchableOpacity>
         </SafeAreaView>

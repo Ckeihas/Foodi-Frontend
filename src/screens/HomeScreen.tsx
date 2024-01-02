@@ -11,6 +11,19 @@ import { AntDesign, MaterialCommunityIcons, FontAwesome5, Octicons } from '@expo
 import { Dimensions } from "react-native";
 import { HomeScreenParams } from "../navigation/HomeScreenStack";
 import { theme } from "../theme/theme";
+import userInfo from "../mobx/UserInfo";
+import { observer } from "mobx-react";
+import Notification from "../components/notification/Notification";
+
+const UserData = () => {
+    return(
+        <View>
+            <Text>{userInfo.currentUser.username}</Text>
+        </View>
+    )
+};
+
+const UserDataObserver = observer(UserData);
 
 type HomeScreenProps = NativeStackScreenProps<BottomTabParamList, 'home'>
 const {width, height} = Dimensions.get('window')
@@ -66,6 +79,9 @@ export default function HomeScreen(): JSX.Element {
                     
                 </View>
                 <Button title="Log out" onPress={() => deleteSecureStorage()}></Button>
+                <View>
+                    <UserDataObserver />
+                </View>
             </View>
             <View style={{alignItems: 'center', marginTop: 50}}>
                 <View style={styles.upperCont}>
@@ -105,7 +121,11 @@ export default function HomeScreen(): JSX.Element {
                         />
                         <Text>Meal Planner</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconContainer}>
+                    <TouchableOpacity 
+                    style={styles.iconContainer}
+                    onPress={() => navigation.navigate('friends')}
+                    >
+                        <Notification />
                         <FontAwesome5 
                         name="user-friends" 
                         size={20} 

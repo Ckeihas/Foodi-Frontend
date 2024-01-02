@@ -23,11 +23,7 @@
       },
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
-        "CFBundleURLTypes": [
-          {
-            "CFBundleURLSchemes": ["com.googleusercontent.apps.947120029998-k89t1g9d4nfkqpbat21lga82ohdsur3f"]
-          }
-        ]
+        
       }
     },
     "android": {
@@ -35,7 +31,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.kekkuli.foodiapp"
+      "package": "com.kekkuli.foodiapp",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"

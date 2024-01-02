@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useEffect, useReducer, useRef } from "react";
 import Animated, { useDerivedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg"
+import UsersPostsStack from "./UsersPostsStack";
 
 
 
@@ -151,7 +152,7 @@ export default function BottomTabNavigation(){
                 <Tab.Screen name="home" component={HomeScreen}/>
                 <Tab.Screen name="feed" component={FeedScreen}/>
                 <Tab.Screen name="createRecipe" component={CreateRecipeScreen}/>
-                <Tab.Screen name="posts" component={UserPostsScreen}/>
+                <Tab.Screen name="posts" component={UsersPostsStack}/>
             </Tab.Navigator>
         </View>
     )

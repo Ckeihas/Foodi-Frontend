@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { SafeAreaView, Text, StyleSheet } from "react-native";
 import { CheckAccessToken } from "./auth/CheckAccessToken";
+import { GetUserData } from "../api/GetUserData";
 
 export default function SplashScreen(): JSX.Element{
 

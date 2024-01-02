@@ -4,6 +4,7 @@ import { FontAwesome, MaterialCommunityIcons, MaterialIcons } from '@expo/vector
 import CarouselView from "../components/carousel/CarouselView";
 import HorizontallScroll from "../components/carousel/HorizontallScroll";
 import { theme } from "../theme/theme";
+import IsSearching from "../components/feed/IsSearching";
 
 interface TestCarouselItem {
     id: number,
@@ -66,6 +67,7 @@ const testii: TestCarouselItem[] = [
 
 export default function FeedScreen(){
     const [search, setSearch] = useState<string>("");
+    const [isSearching, setIsSearching] = useState<boolean>(false);
     const [selectedIcon, setSelectedIcon] = useState(0)
     const icons = [
         {
@@ -132,37 +134,46 @@ export default function FeedScreen(){
                         placeholder="Username" 
                         style={styles.inputField}
                         onChangeText={setSearch}
+                        onPressIn={() => setIsSearching(true)}
                         />
-                    </View>
+                </View>
+                
             </View>
-            <ScrollView 
-            style={styles.filtersCont}
-            horizontal={true}
-            showsHorizontalScrollIndicator={true}
-            >
-                {icons.map((icon, index) => (
-                    <TouchableOpacity
-                    key={index}
-                    style={[{
-                        backgroundColor: selectedIcon === index ? theme.mainColor : 'white'
-                    }, styles.filterIcon]}
-                    onPress={() => handleIconClick(index)}
-                    >
-                    <View>
-                    {icon.icon}
-                    </View>
-                    <Text style={[{
-                        color: selectedIcon === index ? 'white' : 'black'},
-                        styles.filterName
-                    ]}
-                    >
-                        {icon.name}
-                    </Text>            
-                    </TouchableOpacity>
-                ))}
-            </ScrollView>
-            <CarouselView />
-            <HorizontallScroll data={testii}/>
+            {
+                isSearching ? 
+                <IsSearching /> :
+                <>
+                <ScrollView 
+                style={styles.filtersCont}
+                horizontal={true}
+                showsHorizontalScrollIndicator={true}
+                >
+                    {icons.map((icon, index) => (
+                        <TouchableOpacity
+                        key={index}
+                        style={[{
+                            backgroundColor: selectedIcon === index ? theme.mainColor : 'white'
+                        }, styles.filterIcon]}
+                        onPress={() => handleIconClick(index)}
+                        >
+                        <View>
+                        {icon.icon}
+                        </View>
+                        <Text style={[{
+                            color: selectedIcon === index ? 'white' : 'black'},
+                            styles.filterName
+                        ]}
+                        >
+                            {icon.name}
+                        </Text>            
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+                <CarouselView />
+                <HorizontallScroll data={testii}/>
+            </>
+            }
+            
         </ScrollView>
         </SafeAreaView>
     )

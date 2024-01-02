@@ -9,7 +9,10 @@ const options: StackNavigationOptions = {
 
 export type GroceryStackParams = {
     groceryList: undefined;
-    groceries: undefined;
+    groceries: {
+        items: string[],
+        index: number
+    };
 }
 const Stack = createStackNavigator<GroceryStackParams>();
 

@@ -1,53 +1,62 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { View, StyleSheet, SafeAreaView, Text, TouchableOpacity, FlatList } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { GroceryStackParams } from "../../navigation/GroceryListStack";
+import GroceryListModal from "../groceryScreens/GroceryListModal";
+import { AddNewListItem } from "../../api/AddNewListItem";
+import { observer } from "mobx-react";
+import groceries from "../../mobx/GroceryListState";
+import { Entypo } from "@expo/vector-icons"
 
-interface IGroceryItems {
-    title: string
-}
-const data: IGroceryItems[] = [
-    {
-        title: "Actimel"
-    },
-    {
-        title: "Kananmuna"
-    },
-    {
-        title: "Murot"
-    },
-    {
-        title: "Maito"
-    },
-    {
-        title: "Jauheliha"
-    },
-    {
-        title: "Kerma"
-    },
-    {
-        title: "Jäätelö"
-    },
-];
 
-type GroceryItemType = {
-    item: IGroceryItems
-}
-export default function Groceries(): JSX.Element {
+type GroceriesProps = NativeStackScreenProps<GroceryStackParams, 'groceries'>
+export default function Groceries({route}: GroceriesProps): JSX.Element {
+    const [isDone, setIsDone] = useState<{ [key: string]: boolean }>({});
     const navigation = useNavigation<NativeStackNavigationProp<GroceryStackParams>>();
+    const { items, index } = route.params;
+    console.log(index)
 
-    const renderGroceryItem = ({item}: GroceryItemType) => {
+    const handleIsDone = (index: number) => {
+        console.log(index)
+        const key = `${index}`;
+        setIsDone({ ...isDone, [key]: !isDone[key] });
+    };
+
+    const renderGroceryItem = ({item, index}: {item: string, index: number}) => {
+        console.log("Render Grocery Item Func", index)
+        const key = `${index}`;
+        const taskDone = isDone[key] || false;
         return(
-            <TouchableOpacity style={styles.listItemContainer}>
-                <View style={styles.checkCont}></View>
-                <Text>{item.title}</Text>
+            <TouchableOpacity style={styles.listItemContainer} onPress={() => handleIsDone(index)}>
+                <View style={[styles.checkCont, { backgroundColor: taskDone ? "#6AF000" : 'white' }]}>
+                {
+                    taskDone ?
+                    <Entypo name="check" size={20} color='white'/>
+                     :       
+                    <View></View>
+                    
+                    
+                }
+               </View> 
+               <Text>{item}</Text> 
             </TouchableOpacity>
         )
-    }
+    };
+
+    const ShowFlatList = observer(() => {
+        console.log("Show flatlist func")
+        return(
+            <FlatList
+            data={groceries.items[index].groceries}
+            renderItem={({item, index}) => renderGroceryItem({item, index})}
+            contentContainerStyle={styles.flatListStyles}
+            />
+        )
+    });
     return(
-        <SafeAreaView>
+        <SafeAreaView style={styles.container}>
             <View style={styles.headerCont}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons name="chevron-back-outline" size={30} color="black" />
@@ -57,11 +66,8 @@ export default function Groceries(): JSX.Element {
                     <MaterialCommunityIcons name="file-document-edit-outline" size={30} color="black" />
                 </TouchableOpacity>
             </View>
-            <FlatList
-            data={data}
-            renderItem={renderGroceryItem}
-            contentContainerStyle={styles.flatListStyles}
-            />
+            <ShowFlatList />
+            <GroceryListModal AddNewFunction={AddNewListItem} index={index}/>
         </SafeAreaView>
     )
 };
@@ -94,14 +100,14 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
     },
     checkCont: {
-        padding: 10,
         marginRight: 10,
         width: 30,
         height: 30,
         borderRadius: 100,
         alignItems: 'center',
+        justifyContent: 'center',
         borderWidth: 0.5,
-        borderColor: 'lightgray'
+        borderColor: 'lightgray',
     },
     flatListStyles: {
         alignItems: 'center',

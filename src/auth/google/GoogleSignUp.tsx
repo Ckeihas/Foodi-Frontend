@@ -12,7 +12,6 @@ import { webClientId, iosClientId } from '@env';
 
 
 export default function GoogleSignUp(): JSX.Element{
-  WebBrowser.maybeCompleteAuthSession()
 
   GoogleSignin.configure({
     scopes: ['https://www.googleapis.com/auth/drive.readonly'],

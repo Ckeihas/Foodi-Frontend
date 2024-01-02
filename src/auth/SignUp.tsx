@@ -11,25 +11,21 @@ import { RootStackParamList } from "../navigation/Navigation";
 
 export default function SignUp(): JSX.Element{
     const [username, setUsername] = useState("");
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
     const authNav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
    
+    const handlePress = () => {
+        authNav.navigate("createUsername", {
+            email: email,
+            password: password
+        })
+    }
     return(
         <SafeAreaView style={styles.container}>
             <Text style={styles.headerText}>Create Account</Text>
             <View>
-                <View style={styles.inputCont}>
-                    <AntDesign 
-                    name="user" 
-                    size={20} 
-                    color="#666"
-                    style={styles.icon}
-                     />
-                    <TextInput 
-                    placeholder="Username" 
-                    style={styles.inputField}
-                    onChangeText={setUsername}
-                    />
-                </View>
+                
                 <View style={styles.inputCont}>
                     <MaterialIcons 
                     name="alternate-email" 
@@ -37,7 +33,7 @@ export default function SignUp(): JSX.Element{
                     color="#666"
                     style={styles.icon}
                      />
-                    <TextInput placeholder="Email" style={styles.inputField}/>
+                    <TextInput placeholder="Email" style={styles.inputField} onChangeText={setEmail}/>
                 </View>
                 <View style={styles.inputCont}>
                     <Feather 
@@ -46,7 +42,7 @@ export default function SignUp(): JSX.Element{
                     color="#666"
                     style={styles.icon}
                      />
-                    <TextInput placeholder="Password" style={styles.inputField}/>
+                    <TextInput placeholder="Password" style={styles.inputField} onChangeText={setPassword}/>
                 </View>
                 <View style={styles.inputCont}>
                     <Feather 
@@ -59,7 +55,7 @@ export default function SignUp(): JSX.Element{
                 </View>
             </View>
             <View>
-                <Pressable style={styles.signUpBtn}>
+                <Pressable style={styles.signUpBtn} onPress={() => handlePress()}>
                     <Text style={styles.signUpText}>Sign Up</Text>
                 </Pressable>
             </View>

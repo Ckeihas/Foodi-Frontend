@@ -30,7 +30,11 @@ interface Ingredients {
 export type RootStackParamList = {
     signup: undefined;
     login: undefined;
-    createUsername: {userId: string};
+    createUsername: {
+        userId?: string,
+        email?: string,
+        password?: string
+    };
     home: undefined;
     splash: undefined;
     recipeDetails: Ingredients;
