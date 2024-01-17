@@ -1,10 +1,11 @@
 import React from "react";
 import { View, Text, StyleSheet  } from "react-native";
+import ProgressCircle from "../components/progressBar/ProgressCircle";
 
 export default function CreateRecipeScreen(){
     return(
-        <View>
-            <Text>Create Recipe Screen</Text>
+        <View style={styles.container}>
+            
         </View>
     )
 };

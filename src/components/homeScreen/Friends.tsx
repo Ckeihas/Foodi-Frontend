@@ -7,6 +7,10 @@ import { useNavigation } from "@react-navigation/native";
 import { theme } from "../../theme/theme";
 import FriendsFlatList from "../friends/FriendsFlatList";
 import { CheckPendingFriendRequests } from "../notification/helperFunction/CheckPendingFriendRequests";
+import { FriendsParams } from "../../navigation/FriendsStack";
+import userInfo from "../../mobx/UserInfo";
+import { observer } from "mobx-react";
+
 
 type HomeScreenProps = NativeStackScreenProps<HomeScreenParams, 'friends'>
 const { width, height } = Dimensions.get('window')
@@ -15,23 +19,36 @@ type RequestDataType = {
     username: string,
     amount: number
 }
+
+const latestFriendRequest = () => {
+    const latestRequest = userInfo.friendRequests[userInfo.friendRequests.length - 1];
+    return(
+        <View style={styles.requestTextCont}>
+            <Text style={styles.requestHeader}>Friend Requests</Text>
+            <Text style={{color: 'gray', fontWeight: '500'}}>
+                {
+                    latestRequest ? 
+                    userInfo.friendRequests.length > 1 ?
+                    latestRequest.username + " " + " +" + (userInfo.friendRequests.length - 1) :
+                    latestRequest.username
+                    :
+                    ""
+                }
+            </Text>
+        </View>
+    )
+};
+
+const LatestFriendRequestObserver = observer(latestFriendRequest)
+
 export default function Friends(): JSX.Element{
     const [requestData, setRequestData] = useState<RequestDataType>();
     const navigation = useNavigation<NativeStackNavigationProp<HomeScreenProps>>();
-
-    useEffect(() => {
-        CheckPendingFriendRequests()
-        .then((data: any) => {
-            if (data !== false) {
-                setRequestData(data)
-            } else {
-                console.log("No pending friend requests");
-            }
-        })
-        .catch((error) => {
-            console.error("Error:", error); // Handle errors if any
-        });
-    }, [])
+    const friendsNav = useNavigation<NativeStackNavigationProp<FriendsParams>>();
+    console.log("Friends")
+    const latestRequest = userInfo.friendRequests[userInfo.friendRequests.length - 1];
+    console.log("Ystävät: ", userInfo.friendRequests)
+    console.log("Ystävät2: ", userInfo.friendRequests.length)
     return(
         <SafeAreaView style={styles.container}>
             <View style={styles.headerCont}>
@@ -41,28 +58,22 @@ export default function Friends(): JSX.Element{
                 <Text style={styles.headerText}>Friends</Text>
             </View>
 
-            <View style={styles.friendRequestCont}>
+            <TouchableOpacity style={styles.friendRequestCont} onPress={() => friendsNav.navigate("requests", {
+                requests: userInfo.friendRequests
+            })}>
                 <View style={{flexDirection: 'row'}}>
                     <Image source={require("../../../assets/food5.jpg")} style={styles.imageStyle}/>
-                    <View style={styles.requestTextCont}>
-                        <Text style={styles.requestHeader}>Friend Requests</Text>
-                        <Text style={{color: 'gray', fontWeight: '500'}}>
-                            {
-                                requestData ? 
-                                requestData.amount > 1 ?
-                                requestData.username + " " + "+" + requestData.amount :
-                                requestData.username
-                                :
-                                ""
-                            }
-                        </Text>
-                    </View>
+                    <LatestFriendRequestObserver />
                 </View>
                 <View style={styles.requestContRightSide}>
-                    <View style={styles.newRequestIndicator}></View>
+                    {
+                        userInfo.friendRequests.length > 0 ?
+                        <View style={styles.newRequestIndicator}></View> :
+                        <View></View>
+                    }
                     <MaterialIcons name="arrow-forward-ios" size={16} color="gray" />
                 </View>
-            </View>
+            </TouchableOpacity>
 
             <View style={styles.allFriendsCont}>
                 <Text style={styles.allFriendsHeader}>All Friends</Text>
@@ -75,6 +86,7 @@ export default function Friends(): JSX.Element{
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: 'white'
     },
     headerText: {
         fontSize: 20,

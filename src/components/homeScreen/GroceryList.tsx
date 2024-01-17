@@ -14,11 +14,19 @@ import { observer } from "mobx-react";
 //import { renderGroceryListItem } from "./testi";
 import GroceryListFlatList from "../groceryScreens/GroceryListFaltList";
 import GroceryListModal from "../groceryScreens/GroceryListModal";
+import userInfo from "../../mobx/UserInfo";
 
  function GroceryList(): JSX.Element {
     const navigation = useNavigation<NativeStackNavigationProp<HomeScreenParams>>();
     
     console.log("testi")
+    const NoGroceryLists = () => {
+        return(
+            <View style={styles.noGroceryListCont}>
+                <Text style={styles.infoText}>Your grocery lists will pop up in here. Add new list from button below to get started!</Text>
+            </View>
+        )
+    }
     return(
         <SafeAreaView style={styles.container}>   
             <View style={styles.headerCont}>
@@ -30,7 +38,13 @@ import GroceryListModal from "../groceryScreens/GroceryListModal";
                     <MaterialCommunityIcons name="file-document-edit-outline" size={30} color="black" />
                 </TouchableOpacity>
             </View>
-            <GroceryListFlatList />
+            <View style={{flex: 1, alignItems: 'center'}}>
+            {
+                groceries.items.length > 0 ?
+                <GroceryListFlatList /> : 
+                <NoGroceryLists />
+            }
+            </View>
             <GroceryListModal AddNewFunction={AddNewList}/>
         </SafeAreaView>
     )
@@ -41,6 +55,7 @@ export default React.memo(GroceryList)
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: 'white'
     },
     headerText: {
         fontSize: 16,
@@ -136,5 +151,17 @@ const styles = StyleSheet.create({
     cancelText: {
         color: 'white',
         fontWeight: 'bold'
+    },
+    noGroceryListCont: {
+        flex: 1,
+        width: 300,  
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    infoText: {
+        textAlign: 'center',
+        fontSize: 16,
+        fontWeight: '600',
+        lineHeight: 30
     }
 })

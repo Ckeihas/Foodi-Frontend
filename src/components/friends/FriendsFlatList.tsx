@@ -1,5 +1,6 @@
 import React from "react";
 import { FlatList, View, Text, StyleSheet, Image, SafeAreaView, Dimensions } from "react-native";
+import userInfo from "../../mobx/UserInfo";
 
 const data = [
     
@@ -30,8 +31,8 @@ const data = [
 ]
 
 type DataType = {
-    image: number;
-    name: string;
+    id: string;
+    username: string;
 }
 
 const {width, height} = Dimensions.get('window')
@@ -40,7 +41,7 @@ export default function FriendsFlatList(): JSX.Element{
         return(
             <SafeAreaView style={styles.friendContainer}>
                 <Image source={require("../../../assets/food5.jpg")} style={styles.image}/>
-                <Text style={styles.username}>{item.name}</Text>
+                <Text style={styles.username}>{item.username}</Text>
             </SafeAreaView>
         )
     }
@@ -48,7 +49,7 @@ export default function FriendsFlatList(): JSX.Element{
     const ShowFlatList = () => {
         return(
             <FlatList 
-            data={data}
+            data={userInfo.friends}
             renderItem={renderFlatList}
             contentContainerStyle={styles.flatListStyles}
             />

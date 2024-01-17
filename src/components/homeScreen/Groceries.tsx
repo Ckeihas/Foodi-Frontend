@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from "react";
-import { View, StyleSheet, SafeAreaView, Text, TouchableOpacity, FlatList } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'; 
+import React, { useCallback, useState, useMemo, useRef } from "react";
+import { View, StyleSheet, SafeAreaView, Text, TouchableOpacity, FlatList, Image, Dimensions } from "react-native";
+import { Ionicons, MaterialCommunityIcons, Feather } from '@expo/vector-icons'; 
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { GroceryStackParams } from "../../navigation/GroceryListStack";
@@ -9,14 +9,20 @@ import { AddNewListItem } from "../../api/AddNewListItem";
 import { observer } from "mobx-react";
 import groceries from "../../mobx/GroceryListState";
 import { Entypo } from "@expo/vector-icons"
+import { theme } from "../../theme/theme";
+import {CustomBottomSheet} from "../bottomSheet/CustomBottomSheet";
+import BottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet";
 
 
+const {width, height} = Dimensions.get('window')
 type GroceriesProps = NativeStackScreenProps<GroceryStackParams, 'groceries'>
 export default function Groceries({route}: GroceriesProps): JSX.Element {
     const [isDone, setIsDone] = useState<{ [key: string]: boolean }>({});
     const navigation = useNavigation<NativeStackNavigationProp<GroceryStackParams>>();
-    const { items, index } = route.params;
-    console.log(index)
+    const { items, index, title } = route.params;
+
+    const bottomSheetRef = useRef<BottomSheet>(null);
+    const openBottomSheet = () => bottomSheetRef.current?.snapToIndex(0);
 
     const handleIsDone = (index: number) => {
         console.log(index)
@@ -29,6 +35,7 @@ export default function Groceries({route}: GroceriesProps): JSX.Element {
         const key = `${index}`;
         const taskDone = isDone[key] || false;
         return(
+            <View style={{flexDirection: 'column'}}>
             <TouchableOpacity style={styles.listItemContainer} onPress={() => handleIsDone(index)}>
                 <View style={[styles.checkCont, { backgroundColor: taskDone ? "#6AF000" : 'white' }]}>
                 {
@@ -40,8 +47,11 @@ export default function Groceries({route}: GroceriesProps): JSX.Element {
                     
                 }
                </View> 
-               <Text>{item}</Text> 
+               <Text style={styles.itemTitle}>{item}</Text>
+               
             </TouchableOpacity>
+            <View style={styles.seperatorLine}></View>
+            </View>
         )
     };
 
@@ -55,19 +65,28 @@ export default function Groceries({route}: GroceriesProps): JSX.Element {
             />
         )
     });
+
     return(
         <SafeAreaView style={styles.container}>
             <View style={styles.headerCont}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name="chevron-back-outline" size={30} color="black" />
+                    <Ionicons name="chevron-back-outline" size={30} color="gray" />
                 </TouchableOpacity>
-                <Text style={styles.headerText}>Groceries</Text>
-                <TouchableOpacity>
-                    <MaterialCommunityIcons name="file-document-edit-outline" size={30} color="black" />
+                <TouchableOpacity style={styles.addBackground} onPress={() => openBottomSheet()}>
+                    <View style={styles.invitedPeopleCont}>
+                        <View style={styles.invitedAmountCont}>
+                            <Text style={styles.invitedAmountText}>+2</Text>
+                        </View>
+                        <Image source={require("../../../assets/profile1.jpg")} style={styles.invitedImg1}/>
+                        <Image source={require("../../../assets/profile2.jpg")} style={styles.invitedImg2}/>
+                    </View>
+                    <Entypo name="plus" size={20} color="white" />
                 </TouchableOpacity>
             </View>
+            <Text style={styles.headerText}>{title}</Text>
             <ShowFlatList />
             <GroceryListModal AddNewFunction={AddNewListItem} index={index}/>
+            <CustomBottomSheet ref={bottomSheetRef} title="testi"/>
         </SafeAreaView>
     )
 };
@@ -75,17 +94,20 @@ export default function Groceries({route}: GroceriesProps): JSX.Element {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: 'white'
     },
     headerText: {
-        fontSize: 16,
-        fontWeight: 'bold'
+        fontSize: 26,
+        fontWeight: '500',
+        marginLeft: 60,
+        marginBottom: 30
     },
     headerCont: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginTop: 10,
-        marginBottom: 30,
+        marginBottom: 20,
         marginHorizontal: 30,
     },
     listItemContainer: {
@@ -93,11 +115,10 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         backgroundColor: 'white',
-        marginBottom: 20,
         height: 50,
         width: 300,
         borderRadius: 10,
-        paddingLeft: 20,
+        
     },
     checkCont: {
         marginRight: 10,
@@ -114,4 +135,53 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 30,
         borderTopLeftRadius: 30,
     },
+    seperatorLine: {
+        width: 300,
+        borderWidth: 0.5,
+        borderColor: 'lightgray',
+        marginTop: 10,
+        marginBottom: 10
+    },
+    itemTitle: {
+        fontWeight: '500'
+    },
+    addBackground: {
+        backgroundColor: theme.mainColor,
+        borderRadius: 100,
+        padding: 4
+    },
+    invitedPeopleCont: {
+        position: 'absolute',
+        flexDirection: 'row',
+        right: 25
+    },
+    invitedImg1: {
+        width: 30,
+        height: 30,
+        borderRadius: 100,
+        left: 10
+    },
+    invitedImg2: {
+        width: 30,
+        height: 30,
+        borderRadius: 100,
+        
+    },
+    invitedAmountCont: {
+        position: 'absolute',
+        backgroundColor: theme.mainColor,
+        borderRadius: 100,
+        padding: 3,
+        bottom: 20,
+        zIndex: 2
+    },
+    invitedAmountText: {
+        fontSize: 10,
+        color: 'white'
+    },
+    sendBtn: {
+        position: 'absolute',
+        bottom: 60,
+        left: 165
+    }
 })

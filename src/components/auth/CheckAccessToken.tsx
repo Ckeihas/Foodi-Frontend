@@ -6,6 +6,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/Navigation";
 import { BottomTabParamList } from "../../navigation/BottomTabsNavigation";
 import { GetUserData } from "../../api/GetUserData";
+import { CheckPendingFriendRequests } from "../notification/helperFunction/CheckPendingFriendRequests";
 
 async function saveToSecureStorage(key: string, value: string): Promise<void> {
     await SecureStore.setItemAsync(key, value);
@@ -42,6 +43,7 @@ export async function CheckAccessToken(){
                     })
                     } else {
                         const {username, error, message} = response.data;
+                        GetUserData();
                         if(accessToken)
                         navigation.navigate("home")
                     }

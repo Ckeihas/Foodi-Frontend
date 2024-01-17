@@ -7,7 +7,7 @@ import { BottomTabParamList } from "../navigation/BottomTabsNavigation";
 import * as SecureStore from 'expo-secure-store';
 import { CreateNewAccessToken } from "../components/auth/CheckAccessToken";
 import { useNavigation } from "@react-navigation/native";
-import { AntDesign, MaterialCommunityIcons, FontAwesome5, Octicons } from '@expo/vector-icons';
+import { AntDesign, MaterialCommunityIcons, FontAwesome5, Octicons, Feather, Ionicons } from '@expo/vector-icons';
 import { Dimensions } from "react-native";
 import { HomeScreenParams } from "../navigation/HomeScreenStack";
 import { theme } from "../theme/theme";
@@ -18,7 +18,7 @@ import Notification from "../components/notification/Notification";
 const UserData = () => {
     return(
         <View>
-            <Text>{userInfo.currentUser.username}</Text>
+            <Text style={styles.username}>@{userInfo.currentUser.username}</Text>
         </View>
     )
 };
@@ -34,7 +34,7 @@ export default function HomeScreen(): JSX.Element {
     //     const { accessToken, username } = route.params;
     //     console.log("Username: ", accessToken)
     // }, [])
-    
+    console.log("HomeScreen")
     // console.log("Username: ", username)
     const deleteSecureStorage = async () => {
         try {
@@ -72,18 +72,47 @@ export default function HomeScreen(): JSX.Element {
     //     })
     // };
     return(
+        <>
         <View style={styles.container}>
+            <View style={styles.notificationIcon}>
+                <Feather name="bell" size={24} color="white" />
+            </View>
+            <View style={styles.settingsIcon}>
+                <Ionicons name="settings" size={24} color="white" />
+            </View>
+        </View>
+            <View style={styles.lowerSection}>
             <View style={{alignItems: 'center'}}>
-                <View style={styles.imageCont}></View>
-                <View style={styles.headerBackground}>
-                    
+                <View style={styles.imageCont}>
+                    <Image source={require("../../assets/profile1.jpg")} style={styles.profilePicture}/>
                 </View>
-                <Button title="Log out" onPress={() => deleteSecureStorage()}></Button>
-                <View>
+                {/* <Button title="Log out" onPress={() => deleteSecureStorage()}></Button> */}
+                <View style={styles.usernameCont}>
                     <UserDataObserver />
                 </View>
+                
+                <View style={styles.userStats}>
+                    <View style={styles.stats}>
+                        <Text style={styles.statNumber}>12</Text>
+                        <Text style={styles.statText}>Following</Text>
+                    </View>
+
+                    <View style={styles.seperatorLine}/>
+
+                    <View style={styles.stats}>
+                        <Text style={styles.statNumber}>338</Text>
+                        <Text style={styles.statText}>Followers</Text>
+                    </View>  
+
+                    <View style={styles.seperatorLine}/>
+
+                    <View style={styles.stats}>
+                        <Text style={styles.statNumber}>8</Text>
+                        <Text style={styles.statText}>Recipes</Text>
+                    </View>  
+                </View>
             </View>
-            <View style={{alignItems: 'center', marginTop: 50}}>
+
                 <View style={styles.upperCont}>
                     <TouchableOpacity 
                     style={styles.iconContainer}
@@ -91,10 +120,9 @@ export default function HomeScreen(): JSX.Element {
                     >
                         <AntDesign 
                         name="heart" 
-                        size={20} 
+                        size={23} 
                         color={'black'}
                         />
-                        <Text>Favourites</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
                     style={styles.iconContainer}
@@ -102,24 +130,20 @@ export default function HomeScreen(): JSX.Element {
                     >
                         <Octicons 
                         name="checklist" 
-                        size={20} 
+                        size={23} 
                         color="black" 
                         />
-                        <Text>Grocery List</Text>
                     </TouchableOpacity>
-                </View>
-                <View style={styles.lowerCont}>
                     <TouchableOpacity 
                     style={styles.iconContainer}
                     onPress={() => navigation.navigate('mealPlanner')}
                     >
                         <MaterialCommunityIcons 
                         name="calendar-clock" 
-                        size={20} 
+                        size={23} 
                         color={'black'} 
                         
                         />
-                        <Text>Meal Planner</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
                     style={styles.iconContainer}
@@ -128,30 +152,43 @@ export default function HomeScreen(): JSX.Element {
                         <Notification />
                         <FontAwesome5 
                         name="user-friends" 
-                        size={20} 
+                        size={23} 
                         color={'black'} 
                         />
-                        <Text>Friends</Text>
                     </TouchableOpacity>
                 </View>
-            </View>          
-        </View>
+            </View> 
+        </>
     )
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,    
+        backgroundColor: theme.mainColor,
+        position: 'absolute',
+        top: 0,
+        width: width,
+        height: height / 2,
     },
     imageCont: {
         position: 'absolute',
         zIndex: 2,
-        top: 100,
-        borderColor: 'black',
-        borderWidth: 1,
-        width: 100,
-        height: 100,
+        top: -50
+    },
+    profilePicture: {
+        borderColor: 'white',
+        borderWidth: 3,
+        width: 85,
+        height: 85,
         borderRadius: 100,
+    },
+    usernameCont: {
+        top: 50,
+    },
+    username: {
+        color: 'black',
+        fontWeight: 'bold',
+        fontSize: 18
     },
     iconContainer: {
         backgroundColor: 'white',
@@ -159,23 +196,60 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         height: 100,
-        width: 110,
-        margin: 10
+        margin: 10,
+        width: 60
     },
     upperCont: {
         flexDirection: 'row'
     },
-    lowerCont: {
-        flexDirection: 'row'
+    // headerBackground: {
+    //     overflow: 'hidden',
+    //     width: 100,
+    //     height: 350,
+    //     borderBottomLeftRadius: 50,
+    //     borderBottomRightRadius: 50,
+    //     backgroundColor: theme.mainColor,
+    //     transform: [{ scaleX: 4.5 }],
+    // },
+    lowerSection: {
+        zIndex: 2,
+        alignItems: 'center',
+        backgroundColor: 'white',
+        position: 'absolute',
+        bottom: 0,
+        width: width,
+        height: height / 1.4,
+        borderTopRightRadius: 50,
+        borderTopLeftRadius: 50
     },
-    headerBackground: {
-        overflow: 'hidden',
-        width: 100,
-        height: 350,
-        borderBottomLeftRadius: 50,
-        borderBottomRightRadius: 50,
-        backgroundColor: theme.mainColor,
-        transform: [{ scaleX: 4.5 }],
+    userStats: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 70
     },
-    
+    stats: {
+        alignItems: 'center'
+    },
+    statNumber: {
+        fontWeight: 'bold',
+        color: 'black'
+    },
+    statText: {
+        color: 'black',
+        fontWeight: '500'
+    },
+    seperatorLine: {
+        height: 30,
+        borderWidth: 1,
+        borderColor: 'black',
+        marginHorizontal: 10
+    },
+    notificationIcon: {
+        left: width - 60,
+        top: 60
+    },
+    settingsIcon: {
+        top: 35,
+        left: 40
+    }
 })

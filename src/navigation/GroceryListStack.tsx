@@ -11,7 +11,8 @@ export type GroceryStackParams = {
     groceryList: undefined;
     groceries: {
         items: string[],
-        index: number
+        index: number,
+        title: string
     };
 }
 const Stack = createStackNavigator<GroceryStackParams>();

@@ -8,59 +8,59 @@ import IsSearching from "../components/feed/IsSearching";
 
 interface TestCarouselItem {
     id: number,
-    testi?: string,
+    title?: string,
     image?: number,
 };
 
-const testii: TestCarouselItem[] = [
+const testii = [
     {
         id: 0,
-        testi: "MOI",
-        image: require("../../assets/food5.jpg")
+        title: "MOI",
+        image: require("../../assets/food3.jpg")
     },
     {
         id: 1,
-        testi: "MOI",
+        title: "MOI",
         image: require("../../assets/food5.jpg")
     },
     {
         id: 2,
-        testi: "MOI",
+        title: "MOI",
         image: require("../../assets/food5.jpg")
     },
     {
         id: 3,
-        testi: "MOI",
+        title: "MOI",
         image: require("../../assets/food5.jpg")
     },
     {
         id: 4,
-        testi: "MOI",
+        title: "MOI",
         image: require("../../assets/food5.jpg")
     },
     {
         id: 5,
-        testi: "MOI",
+        title: "MOI",
         image: require("../../assets/food5.jpg")
     },
     {
         id: 6,
-        testi: "MOI",
+        title: "MOI",
         image: require("../../assets/food5.jpg")
     },
     {
         id: 7,
-        testi: "MOI",
+        title: "MOI",
         image: require("../../assets/food5.jpg")
     },
     {
         id: 8,
-        testi: "MOI",
+        title: "MOI",
         image: require("../../assets/food5.jpg")
     },
     {
         id: 9,
-        testi: "MOI",
+        title: "MOI",
         image: require("../../assets/food5.jpg")
     },
     ];
@@ -170,6 +170,9 @@ export default function FeedScreen(){
                     ))}
                 </ScrollView>
                 <CarouselView />
+                <View>
+                    <Text style={styles.favouriteText}>Favourites</Text>
+                </View>
                 <HorizontallScroll data={testii}/>
             </>
             }
@@ -222,6 +225,11 @@ const styles = StyleSheet.create({
     filterName: {
         fontWeight: '500',
         fontSize: 12
+    },
+    favouriteText: {
+        fontWeight: 'bold',
+        fontSize: 20,
+        marginHorizontal: 30
     }
 
 });

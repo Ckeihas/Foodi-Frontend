@@ -4,7 +4,7 @@ import { View, Image, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions
 import { RootStackParamList } from "../navigation/Navigation";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, AntDesign, Entypo, FontAwesome5 } from '@expo/vector-icons'; 
-import BottomSheet, { BottomSheetScrollView, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView, BottomSheetModal, BottomSheetModalProvider, } from "@gorhom/bottom-sheet";
 import axios from "axios";
 
 var { width, height } = Dimensions.get('window');

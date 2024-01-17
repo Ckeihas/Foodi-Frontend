@@ -30,12 +30,16 @@ function GroceryListFlatList(){
             style={styles.listItemContainer}
             onPress={() => groceryNav.navigate("groceries", {
                 items: item.groceries,
-                index: index
+                index: index,
+                title: item.title
             })}
             >
                 <View style={styles.listTitleIconContainer}>
-                    <Text>{item.title}</Text>
-                    <MaterialIcons name="arrow-forward-ios" size={24} color="black" />
+                    <View>
+                        <Text style={styles.listTitle}>{item.title}</Text>
+                        <Text style={styles.productAmount}>{item.groceries.length} products</Text>
+                    </View>
+                    <MaterialIcons name="arrow-forward-ios" size={20} color="gray" />
                 </View>
             </TouchableOpacity>
         )
@@ -81,7 +85,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: 270,
-        marginHorizontal: 20
+        marginHorizontal: 20,
+        alignItems: 'center'
     },
     listItemContainer: {
         justifyContent: 'center',
@@ -159,5 +164,14 @@ const styles = StyleSheet.create({
     cancelText: {
         color: 'white',
         fontWeight: 'bold'
+    },
+    listTitle: {
+        fontWeight: '600',
+        fontSize: 15
+    },
+    productAmount: {
+        marginTop: 5,
+        color: 'darkgray',
+        fontWeight: '500'
     }
 })
