@@ -1,13 +1,13 @@
 import { StackNavigationOptions, createStackNavigator } from '@react-navigation/stack';
 import ProfileScreen from '../screens/ProfileScreen';
-import UserPostsScreen from '../screens/UsersPostsScreen';
+import FindUsersScreen from '../screens/FindUsersScreen';
 
 const options: StackNavigationOptions = {
     headerShown: false,
 };
 
 export type UsersPostsParams = {
-    usersPostsScreen: undefined,
+    findUsersScreen: undefined,
     profileScreen: {
         id: string,
         username: string
@@ -16,10 +16,10 @@ export type UsersPostsParams = {
 
 const Stack = createStackNavigator<UsersPostsParams>()
 
-export default function UsersPostsStack(): JSX.Element{
+export default function FindUsersStack(): JSX.Element{
     return(
         <Stack.Navigator screenOptions={options}>
-            <Stack.Screen name='usersPostsScreen' component={UserPostsScreen}/>
+            <Stack.Screen name='findUsersScreen' component={FindUsersScreen}/>
             <Stack.Screen name='profileScreen' component={ProfileScreen}/>
         </Stack.Navigator>
     )

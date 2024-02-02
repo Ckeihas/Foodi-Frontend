@@ -86,7 +86,6 @@ export default function HomeScreen(): JSX.Element {
                 <View style={styles.imageCont}>
                     <Image source={require("../../assets/profile1.jpg")} style={styles.profilePicture}/>
                 </View>
-                {/* <Button title="Log out" onPress={() => deleteSecureStorage()}></Button> */}
                 <View style={styles.usernameCont}>
                     <UserDataObserver />
                 </View>
@@ -112,7 +111,7 @@ export default function HomeScreen(): JSX.Element {
                     </View>  
                 </View>
             </View>
-
+            <Button title="Log out" onPress={() => deleteSecureStorage()}></Button>
                 <View style={styles.upperCont}>
                     <TouchableOpacity 
                     style={styles.iconContainer}

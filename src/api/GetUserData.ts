@@ -7,12 +7,13 @@ import { CheckPendingFriendRequests } from "../components/notification/helperFun
 export async function GetUserData(){
     await axios.post("http://192.168.1.103:3000/user/profile")
     .then( response => {
-        const {username, groceryLists, friendsList, id} = response.data
+        const {username, groceryLists, friendsList, id, userFriendsPosts} = response.data
         console.log("Testi resp: ", username)
         console.log("Lista: ", friendsList)
         console.log("ID: ", id)
         groceries.items = groceryLists
         userInfo.friends = friendsList
+        userInfo.userFriendsPosts = userFriendsPosts
         userInfo.addUserData({
             id: id,
             username: username

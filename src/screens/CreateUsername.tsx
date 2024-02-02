@@ -6,6 +6,8 @@ import { RootStackParamList } from "../navigation/Navigation";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from 'expo-secure-store';
+import { GetUserData } from "../api/GetUserData";
+import { CheckAccessToken } from "../components/auth/CheckAccessToken";
 //Install lodash and set it to textinput
 
 type CreateUsernameProps = NativeStackScreenProps<RootStackParamList, 'createUsername'>
@@ -52,9 +54,12 @@ export default function CreateUsername({route}: CreateUsernameProps): JSX.Elemen
             const accessToken = "AccessToken";
             const refreshToken = "RefreshToken";
             console.log("Tokenit: ", resp.data.accessToken)
+            axios.defaults.headers.common['Authorization'] = `Bearer ${resp.data.accessToken}`;
             saveToSecureStorage(accessToken, resp.data.accessToken)
             saveRefreshToSecureStorage(refreshToken, resp.data.refreshToken)
-            navigation.navigate("home")
+            GetUserData();
+        }).then(() => {
+            navigation.navigate('home')
         })
     }
     return(

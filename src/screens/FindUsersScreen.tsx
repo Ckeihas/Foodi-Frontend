@@ -7,7 +7,7 @@ import { db } from "../firebase/config";
 import { collection, query, where, getDocs, doc, orderBy, serverTimestamp } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { UsersPostsParams } from "../navigation/UsersPostsStack";
+import { UsersPostsParams } from "../navigation/FindUsersStack";
 
 type SearchedUser = {
     id: string,
@@ -15,7 +15,7 @@ type SearchedUser = {
 }
 
 const { width, height } = Dimensions.get('window')
-export default function UserPostsScreen(){
+export default function FindUsersScreen(){
     const [loading, setLoading] = useState<boolean>(false);
     const [searchResult, setSearchResult] = useState<SearchedUser[]>([]);
 

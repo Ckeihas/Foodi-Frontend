@@ -2,21 +2,22 @@ import { createBottomTabNavigator, BottomTabBarProps, BottomTabNavigationOptions
 import { View, StyleSheet, LayoutChangeEvent, Pressable, Text } from "react-native";
 import HomeScreen from "../screens/HomeScreen";
 import FeedScreen from "../screens/FeedScreen";
-import CreateRecipeScreen from "../screens/CreateRecipeScreen";
-import UserPostsScreen from "../screens/UsersPostsScreen";
+import CreateRecipeScreen from "../screens/UserPostsScreen";
+import UserPostsScreen from "../screens/UserPostsScreen";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useEffect, useReducer, useRef } from "react";
 import Animated, { useDerivedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg"
-import UsersPostsStack from "./UsersPostsStack";
+import FindUsersStack from "./FindUsersStack";
+import UsersPostsStack from "./UserPostsStack";
 
 
 
 export type BottomTabParamList = {
     home: undefined;
     feed: undefined;
-    createRecipe: undefined;
     posts: undefined;
+    findUsers: undefined;
 };
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
@@ -151,8 +152,8 @@ export default function BottomTabNavigation(){
             >
                 <Tab.Screen name="home" component={HomeScreen}/>
                 <Tab.Screen name="feed" component={FeedScreen}/>
-                <Tab.Screen name="createRecipe" component={CreateRecipeScreen}/>
                 <Tab.Screen name="posts" component={UsersPostsStack}/>
+                <Tab.Screen name="findUsers" component={FindUsersStack}/>
             </Tab.Navigator>
         </View>
     )

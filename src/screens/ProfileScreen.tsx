@@ -3,7 +3,7 @@ import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, Image } from "r
 import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
-import { UsersPostsParams } from "../navigation/UsersPostsStack";
+import { UsersPostsParams } from "../navigation/FindUsersStack";
 import { theme } from "../theme/theme";
 import userInfo from "../mobx/UserInfo";
 import { arrayUnion, doc, onSnapshot, updateDoc, query, where, getDoc } from "firebase/firestore";

@@ -7,6 +7,8 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/Navigation';
 import { NativeStackScreenProps, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as SecureStore from 'expo-secure-store';
+import { CheckAccessToken } from '../../components/auth/CheckAccessToken';
+import { GetUserData } from '../../api/GetUserData';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'signup'>
 
@@ -67,7 +69,9 @@ export default function AppleSignIn(): JSX.Element{
                     const refreshToken = "RefreshToken";
                     saveToSecureStorage(accessToken, resp.data.accessToken)
                     saveRefreshToSecureStorage(refreshToken, resp.data.refreshToken)
-                    navigation.navigate("home")
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${resp.data.accessToken}`;
+                    GetUserData();
+                    navigation.navigate('home')
                 })
                 console.log("Palauttaa true")
                 // navigation.navigate("createUsername", {

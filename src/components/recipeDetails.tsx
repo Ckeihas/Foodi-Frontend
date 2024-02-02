@@ -2,20 +2,21 @@ import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-naviga
 import React, { useRef, useMemo, useCallback, useState, useEffect } from "react";
 import { View, Image, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, SafeAreaView, TouchableWithoutFeedback, Button} from "react-native";
 import { RootStackParamList } from "../navigation/Navigation";
+import { UsersPostsParams } from "../navigation/UserPostsStack";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, AntDesign, Entypo, FontAwesome5 } from '@expo/vector-icons'; 
 import BottomSheet, { BottomSheetScrollView, BottomSheetModal, BottomSheetModalProvider, } from "@gorhom/bottom-sheet";
 import axios from "axios";
 
 var { width, height } = Dimensions.get('window');
-type RecipeDetailsProps = NativeStackScreenProps<RootStackParamList, 'recipeDetails'>
+type RecipeDetailsProps = NativeStackScreenProps<UsersPostsParams, 'postDetails'>
 export default function RecipeDetails({route}: RecipeDetailsProps): JSX.Element {
     const [selectedIcon, setSelectedIcon] = useState<number>(0);
     //Key value pair key = index_stepindex value = boolean
     const [isDone, setIsDone] = useState<{ [key: string]: boolean }>({});
 
-    const { extendedIngredients, image, readyInMinutes, instructions } = route.params;
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const { extendedIngredients, imageURL, analyzedInstructions, title, description } = route.params;
+    const navigation = useNavigation<NativeStackNavigationProp<UsersPostsParams>>();
 
     console.log("AINEET: ", extendedIngredients)
     // console.log("KUVA: ", image);
@@ -102,34 +103,34 @@ export default function RecipeDetails({route}: RecipeDetailsProps): JSX.Element 
         const key = `${index}_${stepIndex}`;
         setIsDone({ ...isDone, [key]: !isDone[key] });
       };
-    const showInstructions = () => {
-        return(
-            <View>
-                {instructions.map((item, index) => {
-                    return(
-                        <View key={index}>
-                            {item.steps.map((item: any, stepIndex: number) => {
-                                const key = `${index}_${stepIndex}`;
-                                const taskDone = isDone[key] || false;
-                                return(
-                                    <TouchableOpacity key={stepIndex} style={styles.instructionsCont} onPress={() => handleStepPress(index, stepIndex)}>  
-                                        <View style={[styles.numberCont, { backgroundColor: taskDone ? "#FF6A48" : 'white' }]}>
-                                            {
-                                                taskDone ? 
-                                                <Entypo name="check" size={20} color='white'/> :
-                                                <Text>{item.number}</Text>
-                                            }
-                                        </View>     
-                                        <Text style={[styles.instructionText, {color: taskDone ? 'lightgray' : '#393939'}]}>{item.step}</Text>
-                                    </TouchableOpacity>
-                                )
-                            })}
-                        </View>
-                    )
-                })}
-            </View>
-        )
-    };
+    // const showInstructions = () => {
+    //     return(
+    //         <View>
+    //             {instructions.map((item, index) => {
+    //                 return(
+    //                     <View key={index}>
+    //                         {item.map((item: any, stepIndex: number) => {
+    //                             const key = `${index}_${stepIndex}`;
+    //                             const taskDone = isDone[key] || false;
+    //                             return(
+    //                                 <TouchableOpacity key={stepIndex} style={styles.instructionsCont} onPress={() => handleStepPress(index, stepIndex)}>  
+    //                                     <View style={[styles.numberCont, { backgroundColor: taskDone ? "#FF6A48" : 'white' }]}>
+    //                                         {
+    //                                             taskDone ? 
+    //                                             <Entypo name="check" size={20} color='white'/> :
+    //                                             <Text>{item.number}</Text>
+    //                                         }
+    //                                     </View>     
+    //                                     <Text style={[styles.instructionText, {color: taskDone ? 'lightgray' : '#393939'}]}>{item.step}</Text>
+    //                                 </TouchableOpacity>
+    //                             )
+    //                         })}
+    //                     </View>
+    //                 )
+    //             })}
+    //         </View>
+    //     )
+    // };
 
     //Pasta bolognese haku id 1079930 ja x key 4fc4f2ddb8msh16bf5abbb62947cp19168cjsnf7273f935b83
 
@@ -142,7 +143,7 @@ export default function RecipeDetails({route}: RecipeDetailsProps): JSX.Element 
                     <Ionicons name="chevron-back-outline" size={30} color="white" />
                 </TouchableOpacity>
                 <SafeAreaView style={styles.imgCont}>
-                    <Image source={{uri: image}} style={styles.mealImg}/>
+                    <Image source={{uri: imageURL}} style={styles.mealImg}/>
                 </SafeAreaView>
             </View>
             <Button title="press" onPress={handlePress}></Button>
@@ -155,7 +156,7 @@ export default function RecipeDetails({route}: RecipeDetailsProps): JSX.Element 
             >
                 
                 <BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
-                    <Text style={styles.recipeTitle}>Recipe name</Text>
+                    <Text style={styles.recipeTitle}>{title}</Text>
                     <View style={styles.ingredientsCookIconsCont}>
                         {icons.map((icon, index) => (
                             <TouchableOpacity 
@@ -174,7 +175,8 @@ export default function RecipeDetails({route}: RecipeDetailsProps): JSX.Element 
                         {
                             selectedIcon === 0 ? 
                             showIngredients() :
-                            showInstructions()
+                            // showInstructions()
+                            <View></View>
                         }
                     </View>
                 </BottomSheetScrollView>

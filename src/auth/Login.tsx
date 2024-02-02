@@ -52,7 +52,7 @@ export default function Login(): JSX.Element {
                    
             <View style={styles.bottomTextCont}>
                 <Text style={{color: 'gray'}}>Don't have an account yet?</Text>
-                <Pressable onPress={() => authNav.goBack()}>
+                <Pressable onPress={() => authNav.navigate('signup')}>
                     <Text style={styles.signInText}>Sign Up</Text>
                 </Pressable>
             </View>

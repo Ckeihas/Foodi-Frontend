@@ -2,11 +2,12 @@ import { StackNavigationOptions, createStackNavigator } from '@react-navigation/
 import BottomTabNavigation from './BottomTabsNavigation';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import GroceryList from '../components/homeScreen/GroceryList';
-import MealPlanner from '../components/homeScreen/MealPlanner';
+import MealPlanner from '../components/homeScreen/mealPlanner/MealPlanner';
 import Favourites from '../components/homeScreen/Favourites';
 import GroceryListStack from './GroceryListStack';
 import Friends from '../components/homeScreen/Friends';
 import FriendsStack from './FriendsStack';
+import MealPlannerStack from './MealPlannerStack';
 
 const options: StackNavigationOptions = {
   headerShown: false,
@@ -32,7 +33,7 @@ export default function HomeScreenStack(): JSX.Element{
         <Stack.Navigator screenOptions={options}>
             <Stack.Screen name="homeScreen" component={BottomTabNavigation}/>
             <Stack.Screen name="groceryStack" component={GroceryListStack}/>
-            <Stack.Screen name="mealPlanner" component={MealPlanner}/>
+            <Stack.Screen name="mealPlanner" component={MealPlannerStack}/>
             <Stack.Screen name="favourites" component={Favourites}/> 
             <Stack.Screen name='friends' component={FriendsStack}/>         
         </Stack.Navigator>

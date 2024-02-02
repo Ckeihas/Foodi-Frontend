@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Dimensions, Scr
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
-import { HomeScreenParams } from "../../navigation/HomeScreenStack";
-import { theme } from "../../theme/theme";
-import ProgressBar from "../progressBar/ProgressBar";
-import ProgressCircle from "../progressBar/ProgressCircle";
-import HorizontallScroll from "../carousel/HorizontallScroll";
+import { HomeScreenParams } from "../../../navigation/HomeScreenStack";
+import { MealPlannerParams } from "../../../navigation/MealPlannerStack";
+import { theme } from "../../../theme/theme";
+import ProgressBar from "../../progressBar/ProgressBar";
+import ProgressCircle from "../../progressBar/ProgressCircle";
+import HorizontallScroll from "../../carousel/HorizontallScroll";
 
 interface TestCarouselItem {
     id: number,
@@ -19,32 +20,32 @@ const testii= [
     {
         id: 0,
         title: "Breakfast",
-        image: require("../../../assets/food3.jpg")
+        image: require("../../../../assets/food3.jpg")
     },
     {
         id: 1,
         title: "Lunch",
-        image: require("../../../assets/food4.jpg")
+        image: require("../../../../assets/food3.jpg")
     },
     {
         id: 2,
         title: "Lunch nmr 2",
-        image: require("../../../assets/food3.jpg")
+        image: require("../../../../assets/food3.jpg")
     },
     {
         id: 3,
         title: "Snack",
-        image: require("../../../assets/food2.jpg")
+        image: require("../../../../assets/food3.jpg")
     },
     {
         id: 4,
         title: "Dinner",
-        image: require("../../../assets/food1.jpg")
+        image: require("../../../../assets/food3.jpg")
     },
     {
         id: 5,
         title: "MOI",
-        image: require("../../../assets/food5.jpg")
+        image: require("../../../../assets/food3.jpg")
     },
     ];
 
@@ -52,9 +53,11 @@ const testii= [
 
 
 type HomeScreenProps = NativeStackScreenProps<HomeScreenParams, 'mealPlanner'>
+
 const { width, height } = Dimensions.get('window');
 export default function MealPlanner(): JSX.Element {
     const navigation = useNavigation<NativeStackNavigationProp<HomeScreenProps>>();
+    const mealNav = useNavigation<NativeStackNavigationProp<MealPlannerParams>>();
     return(
         <ScrollView style={{flex: 1, backgroundColor: 'white'}}>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.goBackBtn}>
@@ -84,7 +87,7 @@ export default function MealPlanner(): JSX.Element {
             <View style={{marginTop: 40}}>
                 <View style={styles.mealsHeadersCont}>
                     <Text style={styles.todaysMealsText}>Today's meals</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => mealNav.navigate('mealCalendar')}>
                         <Text style={styles.openCalendarText}>Open Calendar</Text>
                     </TouchableOpacity>
                 </View>
