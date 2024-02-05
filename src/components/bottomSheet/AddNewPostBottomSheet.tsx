@@ -146,6 +146,8 @@ export const AddNewPostBottomSheet = forwardRef<Ref, Props>((props, reference) =
 
       const createJSON = async () => {
         const { imageURL, title, description, extendedIngredients, analyzedInstructions } = formData;
+
+       
         try {
             const storageRef = ref(storage, 'posts/' + uuidv4());
             const response = await fetch(imageURL);

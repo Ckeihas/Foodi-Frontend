@@ -18,8 +18,9 @@ type Ingredients = {
 };
 
 interface Instructions {
-    id: string, 
-    text: string
+    id: string,
+    number: number,
+    step: string
   }
 
 interface IUserPosts {
