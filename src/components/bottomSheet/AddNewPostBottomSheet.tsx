@@ -177,16 +177,20 @@ export const AddNewPostBottomSheet = forwardRef<Ref, Props>((props, reference) =
                   
                       console.log('JSON Object:', jsonObject);
                       await addDoc(collection(db, 'posts'), {
-                          id: userInfo.currentUser.id,
+                          userId: userInfo.currentUser.id,
+                          itemId: uuidv4(),
                           username: userInfo.currentUser.username,
                           imageURL: downloadURL,
                           title: title,
                           description: description,
                           extendedIngredients: extendedIngredients,
                           analyzedInstructions: analyzedInstructions,
+                          likes: [],
                           timestamp: serverTimestamp()
                       }).then(() => {
                         console.log("Post upload successfull")
+                        titleInputRef.current?.clear();
+                        descriptionInputRef.current?.clear();
                         setFormData({
                             imageURL: '',
                             title: '',

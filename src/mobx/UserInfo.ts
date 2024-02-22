@@ -29,14 +29,24 @@ interface IUserPosts {
     description: string;
     extendedIngredients: Ingredients[];
     analyzedInstructions: Instructions[];
-    id: string;
-    username: string
+    userId: string;
+    itemId: string;
+    username: string;
+    likes: string[];
 };
 
 const addNewRequest = (requests: IFriendRequests[], newRequest: IFriendRequests) => [
     ...requests,
     newRequest  
 ];
+
+const addNewLike = (likes: string[], newLike: string) => [
+    ...likes,
+    newLike
+];
+const removeLike = (likes: string[], removeId: string) => (
+   likes.filter((userId) => userId != removeId)
+);
 
 class UserInfo{
     currentUser: User = {
@@ -58,11 +68,19 @@ class UserInfo{
 
     addUserData(user = {id: "", username: ""}) {
         this.currentUser = user
-    }
+    };
 
     addFriendRequest(request: any) {
         this.friendRequests = request
-      }
+    };
+
+    newLike(likes: string[], newLike: string){
+        this.userFriendsPosts[0].likes = addNewLike(likes, newLike)
+    };
+
+    remove(likes: string[], removeId: string){
+        this.userFriendsPosts[0].likes = removeLike(likes, removeId)
+    };
 };
 
 const userInfo = new UserInfo();

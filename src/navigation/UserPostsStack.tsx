@@ -33,7 +33,7 @@ interface PostItem {
     description: string;
     extendedIngredients: Ingredients[];
     analyzedInstructions: Instructions[];
-    id: string;
+    userId: string;
     username: string
 }
 

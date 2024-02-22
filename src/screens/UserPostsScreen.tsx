@@ -14,14 +14,41 @@ import userInfo from "../mobx/UserInfo";
 import { AddNewPostBottomSheet } from "../components/bottomSheet/AddNewPostBottomSheet";
 import BottomSheet from "@gorhom/bottom-sheet";
 import FriendsPostFlatlist from "../components/usersPosts/FriendsPostFlatlist";
+import axios from "axios";
+import * as SecureStore from 'expo-secure-store';
 
+type Ingredients = {
+    amount: number,
+    id: string,
+    name: string,
+    unit: string
+};
+
+interface Instructions {
+    id: string,
+    number: number,
+    step: string
+};
+
+interface IUserPosts {
+    imageURL: string;
+    title: string;
+    description: string;
+    extendedIngredients: Ingredients[];
+    analyzedInstructions: Instructions[];
+    userId: string;
+    itemId: string;
+    username: string;
+    likes: string[];
+};
 
 export default function UserPostsScreen(){
 
+    const [posts, setPosts] = useState<IUserPosts[]>([]);
+    const [lastVisible, setLastVisible] = useState();
     const bottomSheetRef = useRef<BottomSheet>(null);
     const openBottomSheet = () => bottomSheetRef.current?.snapToIndex(0);
     const closeBottomSheet = () => bottomSheetRef.current?.close();
-
 
     return(
         <View style={styles.container}>

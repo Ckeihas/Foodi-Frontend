@@ -1,153 +1,17 @@
-import React from "react";
-import { View, StyleSheet, FlatList, Text, Image, Dimensions, SafeAreaView, TouchableOpacity } from "react-native";
+import React, { useCallback, useState, useEffect } from "react";
+import { View, StyleSheet, FlatList, Text, Image, Dimensions, SafeAreaView, TouchableOpacity, ActivityIndicator, Button } from "react-native";
 import { AntDesign, Ionicons, Feather } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { UsersPostsParams } from "../../navigation/UserPostsStack";
 import userInfo from "../../mobx/UserInfo";
+import IsPostLiked from "../bottomSheet/addNewPostHelpers/IsPostLiked";
+import LikeThePost from "../bottomSheet/addNewPostHelpers/LikeThePost";
+import { ModifyMobxLikes } from "../bottomSheet/addNewPostHelpers/LikeThePost";
+import { observer } from "mobx-react";
+import axios from "axios";
+import * as SecureStore from 'expo-secure-store';
 
-const data = [
-    {
-        imageURL: 'https://firebasestorage.googleapis.com/v0/b/foodi-app-8e777.appspot.com/o/posts%2F7c3b8e57-e467-4f28-af7d-2e39555b21c2?alt=media&token=b4873d15-6dda-4034-8606-da57031bd0c3',
-        extendedIngredients: [
-            {amount: 1, id: '1' , name: 'porkkana', unit: 'kpl'},
-            {amount: 3, id: '2' , name: 'Rahka', unit: 'kpl'},
-            {amount: 2, id: '3' , name: 'Murot', unit: 'kpl'},
-            {amount: 4, id: '4' , name: 'Jauheliha', unit: 'kpl'}
-        ],
-        instructions: [
-            {steps: [
-                {number: 1, step: "ohjeita tulee tässä näin jotain höpötihöö"},
-                {number: 2, step: "vähän lisää jotain tekstiä jeejeejeejejejej"},
-                {number: 3, step: "lorum ipsum lorotilollopekka poutapää"},
-                {number: 4, step: "lorum ipsum dipsun nipsun kimpsun kampsun"},
-                {number: 5, step: "vesi hiisi sihisi hississä ärrä kierrän korren ympärin"},
-            ]}
-        ],
-        title: 'Herra TarTar',
-        description: 'Maailman söpöin koiraotus ja otus mitä on ylipäätänsä :)))))))'
-    },
-    {
-        imageURL: 'https://firebasestorage.googleapis.com/v0/b/foodi-app-8e777.appspot.com/o/posts%2F7c3b8e57-e467-4f28-af7d-2e39555b21c2?alt=media&token=b4873d15-6dda-4034-8606-da57031bd0c3',
-        extendedIngredients: [
-            {amount: 1, id: '1' , name: 'porkkana', unit: 'kpl'},
-            {amount: 3, id: '2' , name: 'Rahka', unit: 'kpl'},
-            {amount: 2, id: '3' , name: 'Murot', unit: 'kpl'},
-            {amount: 4, id: '4' , name: 'Jauheliha', unit: 'kpl'}
-        ],
-        instructions: [
-            {steps: [
-                {number: 1, step: "ohjeita tulee tässä näin jotain höpötihöö"},
-                {number: 2, step: "vähän lisää jotain tekstiä jeejeejeejejejej"},
-                {number: 3, step: "lorum ipsum lorotilollopekka poutapää"},
-                {number: 4, step: "lorum ipsum dipsun nipsun kimpsun kampsun"},
-                {number: 5, step: "vesi hiisi sihisi hississä ärrä kierrän korren ympärin"},
-            ]}
-        ],
-        title: 'Herra TarTar',
-        description: 'Maailman söpöin koiraotus ja otus mitä on ylipäätänsä :)))))))'
-    },
-    {
-        imageURL: 'https://firebasestorage.googleapis.com/v0/b/foodi-app-8e777.appspot.com/o/posts%2F7c3b8e57-e467-4f28-af7d-2e39555b21c2?alt=media&token=b4873d15-6dda-4034-8606-da57031bd0c3',
-        extendedIngredients: [
-            {amount: 1, id: '1' , name: 'porkkana', unit: 'kpl'},
-            {amount: 3, id: '2' , name: 'Rahka', unit: 'kpl'},
-            {amount: 2, id: '3' , name: 'Murot', unit: 'kpl'},
-            {amount: 4, id: '4' , name: 'Jauheliha', unit: 'kpl'}
-        ],
-        instructions: [
-            {steps: [
-                {number: 1, step: "ohjeita tulee tässä näin jotain höpötihöö"},
-                {number: 2, step: "vähän lisää jotain tekstiä jeejeejeejejejej"},
-                {number: 3, step: "lorum ipsum lorotilollopekka poutapää"},
-                {number: 4, step: "lorum ipsum dipsun nipsun kimpsun kampsun"},
-                {number: 5, step: "vesi hiisi sihisi hississä ärrä kierrän korren ympärin"},
-            ]}
-        ],
-        title: 'Herra TarTar',
-        description: 'Maailman söpöin koiraotus ja otus mitä on ylipäätänsä :)))))))'
-    },
-    {
-        imageURL: 'https://firebasestorage.googleapis.com/v0/b/foodi-app-8e777.appspot.com/o/posts%2F7c3b8e57-e467-4f28-af7d-2e39555b21c2?alt=media&token=b4873d15-6dda-4034-8606-da57031bd0c3',
-        extendedIngredients: [
-            {amount: 1, id: '1' , name: 'porkkana', unit: 'kpl'},
-            {amount: 3, id: '2' , name: 'Rahka', unit: 'kpl'},
-            {amount: 2, id: '3' , name: 'Murot', unit: 'kpl'},
-            {amount: 4, id: '4' , name: 'Jauheliha', unit: 'kpl'}
-        ],
-        instructions: [
-            {steps: [
-                {number: 1, step: "ohjeita tulee tässä näin jotain höpötihöö"},
-                {number: 2, step: "vähän lisää jotain tekstiä jeejeejeejejejej"},
-                {number: 3, step: "lorum ipsum lorotilollopekka poutapää"},
-                {number: 4, step: "lorum ipsum dipsun nipsun kimpsun kampsun"},
-                {number: 5, step: "vesi hiisi sihisi hississä ärrä kierrän korren ympärin"},
-            ]}
-        ],
-        title: 'Herra TarTar',
-        description: 'Maailman söpöin koiraotus ja otus mitä on ylipäätänsä :)))))))'
-    },
-    {
-        imageURL: 'https://firebasestorage.googleapis.com/v0/b/foodi-app-8e777.appspot.com/o/posts%2F7c3b8e57-e467-4f28-af7d-2e39555b21c2?alt=media&token=b4873d15-6dda-4034-8606-da57031bd0c3',
-        extendedIngredients: [
-            {amount: 1, id: '1' , name: 'porkkana', unit: 'kpl'},
-            {amount: 3, id: '2' , name: 'Rahka', unit: 'kpl'},
-            {amount: 2, id: '3' , name: 'Murot', unit: 'kpl'},
-            {amount: 4, id: '4' , name: 'Jauheliha', unit: 'kpl'}
-        ],
-        instructions: [
-            {steps: [
-                {number: 1, step: "ohjeita tulee tässä näin jotain höpötihöö"},
-                {number: 2, step: "vähän lisää jotain tekstiä jeejeejeejejejej"},
-                {number: 3, step: "lorum ipsum lorotilollopekka poutapää"},
-                {number: 4, step: "lorum ipsum dipsun nipsun kimpsun kampsun"},
-                {number: 5, step: "vesi hiisi sihisi hississä ärrä kierrän korren ympärin"},
-            ]}
-        ],
-        title: 'Herra TarTar',
-        description: 'Maailman söpöin koiraotus ja otus mitä on ylipäätänsä :)))))))'
-    },
-    {
-        imageURL: 'https://firebasestorage.googleapis.com/v0/b/foodi-app-8e777.appspot.com/o/posts%2F7c3b8e57-e467-4f28-af7d-2e39555b21c2?alt=media&token=b4873d15-6dda-4034-8606-da57031bd0c3',
-        extendedIngredients: [
-            {amount: 1, id: '1' , name: 'porkkana', unit: 'kpl'},
-            {amount: 3, id: '2' , name: 'Rahka', unit: 'kpl'},
-            {amount: 2, id: '3' , name: 'Murot', unit: 'kpl'},
-            {amount: 4, id: '4' , name: 'Jauheliha', unit: 'kpl'}
-        ],
-        instructions: [
-            {steps: [
-                {number: 1, step: "ohjeita tulee tässä näin jotain höpötihöö"},
-                {number: 2, step: "vähän lisää jotain tekstiä jeejeejeejejejej"},
-                {number: 3, step: "lorum ipsum lorotilollopekka poutapää"},
-                {number: 4, step: "lorum ipsum dipsun nipsun kimpsun kampsun"},
-                {number: 5, step: "vesi hiisi sihisi hississä ärrä kierrän korren ympärin"},
-            ]}
-        ],
-        title: 'Herra TarTar',
-        description: 'Maailman söpöin koiraotus ja otus mitä on ylipäätänsä :)))))))'
-    },
-    {
-        imageURL: 'https://firebasestorage.googleapis.com/v0/b/foodi-app-8e777.appspot.com/o/posts%2F7c3b8e57-e467-4f28-af7d-2e39555b21c2?alt=media&token=b4873d15-6dda-4034-8606-da57031bd0c3',
-        extendedIngredients: [
-            {amount: 1, id: '1' , name: 'porkkana', unit: 'kpl'},
-            {amount: 3, id: '2' , name: 'Rahka', unit: 'kpl'},
-            {amount: 2, id: '3' , name: 'Murot', unit: 'kpl'},
-            {amount: 4, id: '4' , name: 'Jauheliha', unit: 'kpl'}
-        ],
-        instructions: [
-            {steps: [
-                {number: 1, step: "ohjeita tulee tässä näin jotain höpötihöö"},
-                {number: 2, step: "vähän lisää jotain tekstiä jeejeejeejejejej"},
-                {number: 3, step: "lorum ipsum lorotilollopekka poutapää"},
-                {number: 4, step: "lorum ipsum dipsun nipsun kimpsun kampsun"},
-                {number: 5, step: "vesi hiisi sihisi hississä ärrä kierrän korren ympärin"},
-            ]}
-        ],
-        title: 'Herra TarTar',
-        description: 'Maailman söpöin koiraotus ja otus mitä on ylipäätänsä :)))))))'
-    }
-]
 
 type Ingredients = {
     amount: number,
@@ -176,16 +40,134 @@ interface PostItem {
     description: string;
     extendedIngredients: Ingredients[];
     analyzedInstructions: Instructions[];
-    id: string;
-    username: string
+    userId: string;
+    itemId: string;
+    username: string;
+    likes: string[];
 }
 
 const { width, height } = Dimensions.get('window');
 
+interface LikeThePostProps {
+    itemId: string
+}
 export default function FriendsPostFlatlist(){
+    const [pressed, setPressed] = useState(false);
+    const [posts, setPosts] = useState<PostItem[]>([]);
+    const [lastVisible, setLastVisible] = useState<string>();
+    const [loading, setLoading] = useState(false);
+    const [endReached, setEndReached] = useState(false);
     const navigation = useNavigation<NativeStackNavigationProp<UsersPostsParams>>();
-    console.log("Posts: ", userInfo.userFriendsPosts)
-    const renderFlatListItem = ({item}: {item: PostItem}) => {
+
+    // const Test = ({itemId, index}: {itemId: string, index: number}) => {
+    //     console.log(index)
+    //     console.log("RETURN LIKE: ", itemId)
+    //     const findMe = userInfo.userFriendsPosts[index].likes.find((userId) => userId === userInfo.currentUser.id);
+    //     const findPost = userInfo.userFriendsPosts[index].likes
+    //     //const findMe = findPost?.likes.find((userId) => userId === userInfo.currentUser.id)
+    //     console.log("Find post: ", findPost)
+    //         if(findMe == undefined && findPost){
+    //             console.log("ei löytyny: ", itemId)
+    //             userInfo.newLike(findPost, userInfo.currentUser.id)
+    //             return false
+    //         } else if(findPost) {
+    //             console.log("löytyi: ", itemId)
+    //             userInfo.remove(findPost, userInfo.currentUser.id)
+    //             return true
+    //         }
+    // };
+
+    // const ReturnLike = ({itemId, index}: {itemId: string, index: number}) => {
+    //     console.log(index)
+    //     console.log("RETURN LIKE: ", itemId)
+    //     const findPost = userInfo.userFriendsPosts[index].likes.find((userId) => userId === userInfo.currentUser.id);
+    //     //const findMe = findPost?.likes.find((userId) => userId === userInfo.currentUser.id)
+    //     //console.log("Find post: ", findPost)
+    //         if(findPost == undefined){
+    //             //console.log("ei löytyny: ", itemId)
+    //             return(
+    //                 <AntDesign name="like2" size={24} color='black' />              
+    //             )
+    //         } else {
+    //             //console.log("löytyi: ", itemId)
+    //             return(
+    //                 <AntDesign name="like2" size={24} color='red' />
+    //             )
+    //         }
+    // };
+    // const Observ = observer(ReturnLike);
+    async function saveToSecureStorage(key: string, value: string): Promise<void> {
+        await SecureStore.setItemAsync(key, value);
+    };
+
+  
+    const firstBatch = "http://192.168.1.103:3000/user/posts"
+    const nextPage = "http://192.168.1.103:3000/user/posts/next-page";
+
+    const GetPaginatedPosts = async (url: string) => {
+        console.log("Before loading check")
+        if(loading){
+            return;
+        }
+        if(endReached){
+            return;
+        }
+        console.log("Get posts")
+        setLoading(true)
+        let refreshToken = await SecureStore.getItemAsync("RefreshToken");
+        await axios.post(url, {data: lastVisible}).then(async (response: any) => {
+            const {error, message,  userFriendsPosts, lastVisibleItem, endReached } = response.data
+            if(error){
+                await axios.post("http://192.168.1.103:3000/new/new-access", {refreshToken: refreshToken})
+                .then((resp) => {
+                    const {error, accessToken, message} = resp.data;
+
+                    console.log("Success: ", accessToken, message)
+                    const newAccessToken = "AccessToken";
+                    saveToSecureStorage(newAccessToken, accessToken)
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+                }).then(async () => {
+                    console.log('then')
+                    await axios.post(url, {data: lastVisible}).then(async response => {
+                        const {error, userFriendsPosts, lastVisibleItem, endReached } = response.data
+                        
+                        if(endReached){
+                            console.log('End Reached')
+                            setEndReached(true)
+                        } else {               
+                            setPosts((existingPosts) => {
+                                return [...existingPosts, ...userFriendsPosts]
+                            });
+                            setLastVisible(lastVisibleItem)
+                        };
+                        
+                    })
+                })
+            } else {
+                if(endReached){
+                    console.log('End reached')  
+                    setEndReached(true)      
+                } else {
+                    console.log("setted")
+                    setPosts((existingPosts) => {
+                        return [...existingPosts, ...userFriendsPosts]
+                    });
+                    setLastVisible(lastVisibleItem);
+                };
+                
+            }
+            setLoading(false)
+        }).catch((error: any) => {
+            console.log("Error: ", error)
+        })
+    };
+
+    useEffect(() => {
+        console.log("use effect")
+        GetPaginatedPosts(firstBatch)
+    }, []);
+
+    const renderFlatListItem = ({item, index}: {item: PostItem, index: number}) => {
         return(
             <View style={styles.postCardCont}>
                 <View style={styles.postContents}>
@@ -202,7 +184,10 @@ export default function FriendsPostFlatlist(){
                     <Image source={{uri: item.imageURL}} style={styles.postImg}/>
                     <View style={styles.postStatsCont}>
                         <View style={styles.likeAndSaveCont}>
-                            <AntDesign name="like2" size={24} color="black" />
+                            <TouchableOpacity>
+                                <AntDesign name="like2" size={24} color="black" />
+                            </TouchableOpacity>
+                            
                             <Ionicons name="download-outline" size={24} color="black" style={styles.saveIcon}/>
                         </View>
                         <View style={styles.likesCont}>
@@ -215,7 +200,7 @@ export default function FriendsPostFlatlist(){
                             imageURL: item.imageURL,
                             description: item.description,
                             title: item.title,
-                            id: item.id,
+                            userId: item.userId,
                             username: item.username
                         })}>
                             <Feather name="book-open" size={24} color="black" />
@@ -225,12 +210,33 @@ export default function FriendsPostFlatlist(){
             </View>
         )
     }
+
+    const ListFooter = () => {
+        return(
+            <View>
+                {
+                    loading && <ActivityIndicator />
+                }
+                {
+                    endReached &&
+                    <View style={{alignItems: 'center'}}>
+                        <AntDesign name="checkcircleo" size={30} color="green" />
+                        <Text style={styles.listFooterTextStyle}>You have seen all posts</Text>
+                    </View>
+                }
+            </View>
+        )
+    }
+    
     return(
         <SafeAreaView style={styles.container}>
             <FlatList 
-            data={userInfo.userFriendsPosts}
-            renderItem={renderFlatListItem}
+            data={posts}
+            keyExtractor={(item) => item.itemId}
+            renderItem={({item, index}) => renderFlatListItem({item, index})}
             contentContainerStyle={styles.flatlistStyle}
+            onEndReached={() => GetPaginatedPosts(nextPage)}
+            ListFooterComponent={() => <ListFooter />}
             />
         </SafeAreaView>
     )
@@ -311,5 +317,11 @@ const styles = StyleSheet.create({
     likes: {
         fontSize: 24,
         fontWeight: 'bold'
+    },
+    listFooterTextStyle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 60,
+        marginTop: 20
     }
 })

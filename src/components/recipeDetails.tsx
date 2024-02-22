@@ -143,6 +143,7 @@ export default function RecipeDetails({route}: RecipeDetailsProps): JSX.Element 
         return(
             <View>
                 {analyzedInstructions.map((item, index) => {
+                    console.log("Onko sama id: ", item.id)
                      const key = `${item.id}_${index}`;
                      const taskDone = isDone[key] || false;
                     return(
