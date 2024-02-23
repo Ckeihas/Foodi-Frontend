@@ -49,7 +49,7 @@ export const AddPostData: React.FC<AddNewPostContentProps> = ({
   toggleModal,
   isModalActive,
   titleInputRef,
-  descriptionInputRef
+  descriptionInputRef,
 }) => {
   
     return(

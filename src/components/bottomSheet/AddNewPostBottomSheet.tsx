@@ -144,6 +144,13 @@ export const AddNewPostBottomSheet = forwardRef<Ref, Props>((props, reference) =
           });
       };
 
+    //   function loopThis(){
+    //     for (let index = 0; index < 10; index++) {
+    //         createJSON()
+    //     }
+    //   }
+      
+
       const createJSON = async () => {
         const { imageURL, title, description, extendedIngredients, analyzedInstructions } = formData;
 

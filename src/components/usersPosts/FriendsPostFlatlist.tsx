@@ -11,6 +11,7 @@ import { ModifyMobxLikes } from "../bottomSheet/addNewPostHelpers/LikeThePost";
 import { observer } from "mobx-react";
 import axios from "axios";
 import * as SecureStore from 'expo-secure-store';
+import RenderPostItem from "./RenderPostItem";
 
 
 type Ingredients = {
@@ -48,64 +49,23 @@ interface PostItem {
 
 const { width, height } = Dimensions.get('window');
 
-interface LikeThePostProps {
-    itemId: string
-}
+
 export default function FriendsPostFlatlist(){
-    const [pressed, setPressed] = useState(false);
     const [posts, setPosts] = useState<PostItem[]>([]);
     const [lastVisible, setLastVisible] = useState<string>();
     const [loading, setLoading] = useState(false);
     const [endReached, setEndReached] = useState(false);
-    const navigation = useNavigation<NativeStackNavigationProp<UsersPostsParams>>();
+   
 
-    // const Test = ({itemId, index}: {itemId: string, index: number}) => {
-    //     console.log(index)
-    //     console.log("RETURN LIKE: ", itemId)
-    //     const findMe = userInfo.userFriendsPosts[index].likes.find((userId) => userId === userInfo.currentUser.id);
-    //     const findPost = userInfo.userFriendsPosts[index].likes
-    //     //const findMe = findPost?.likes.find((userId) => userId === userInfo.currentUser.id)
-    //     console.log("Find post: ", findPost)
-    //         if(findMe == undefined && findPost){
-    //             console.log("ei löytyny: ", itemId)
-    //             userInfo.newLike(findPost, userInfo.currentUser.id)
-    //             return false
-    //         } else if(findPost) {
-    //             console.log("löytyi: ", itemId)
-    //             userInfo.remove(findPost, userInfo.currentUser.id)
-    //             return true
-    //         }
-    // };
-
-    // const ReturnLike = ({itemId, index}: {itemId: string, index: number}) => {
-    //     console.log(index)
-    //     console.log("RETURN LIKE: ", itemId)
-    //     const findPost = userInfo.userFriendsPosts[index].likes.find((userId) => userId === userInfo.currentUser.id);
-    //     //const findMe = findPost?.likes.find((userId) => userId === userInfo.currentUser.id)
-    //     //console.log("Find post: ", findPost)
-    //         if(findPost == undefined){
-    //             //console.log("ei löytyny: ", itemId)
-    //             return(
-    //                 <AntDesign name="like2" size={24} color='black' />              
-    //             )
-    //         } else {
-    //             //console.log("löytyi: ", itemId)
-    //             return(
-    //                 <AntDesign name="like2" size={24} color='red' />
-    //             )
-    //         }
-    // };
-    // const Observ = observer(ReturnLike);
     async function saveToSecureStorage(key: string, value: string): Promise<void> {
         await SecureStore.setItemAsync(key, value);
     };
 
-  
     const firstBatch = "http://192.168.1.103:3000/user/posts"
     const nextPage = "http://192.168.1.103:3000/user/posts/next-page";
 
     const GetPaginatedPosts = async (url: string) => {
-        console.log("Before loading check")
+        //console.log("Before loading check")
         if(loading){
             return;
         }
@@ -117,6 +77,7 @@ export default function FriendsPostFlatlist(){
         let refreshToken = await SecureStore.getItemAsync("RefreshToken");
         await axios.post(url, {data: lastVisible}).then(async (response: any) => {
             const {error, message,  userFriendsPosts, lastVisibleItem, endReached } = response.data
+            
             if(error){
                 await axios.post("http://192.168.1.103:3000/new/new-access", {refreshToken: refreshToken})
                 .then((resp) => {
@@ -155,11 +116,15 @@ export default function FriendsPostFlatlist(){
                     setLastVisible(lastVisibleItem);
                 };
                 
-            }
+            }   
+        })
+        .then(() => {
             setLoading(false)
-        }).catch((error: any) => {
+        })
+        .catch((error: any) => {
             console.log("Error: ", error)
         })
+        
     };
 
     useEffect(() => {
@@ -167,63 +132,24 @@ export default function FriendsPostFlatlist(){
         GetPaginatedPosts(firstBatch)
     }, []);
 
-    const renderFlatListItem = ({item, index}: {item: PostItem, index: number}) => {
-        return(
-            <View style={styles.postCardCont}>
-                <View style={styles.postContents}>
-                    <View style={styles.postOwnerCont}>
-                        <Image source={require('../../../assets/profile1.jpg')} style={styles.postOwnerImg}/>
-                        <View style={styles.usernameTimeCont}>
-                            <Text style={styles.username}>{item.username}</Text>
-                            <Text style={styles.time}>4h ago</Text>
-                        </View>
-                    </View>
-                    <View style={styles.descriptionCont}>
-                        <Text style={styles.descriptionText}>{item.description}</Text>
-                    </View>
-                    <Image source={{uri: item.imageURL}} style={styles.postImg}/>
-                    <View style={styles.postStatsCont}>
-                        <View style={styles.likeAndSaveCont}>
-                            <TouchableOpacity>
-                                <AntDesign name="like2" size={24} color="black" />
-                            </TouchableOpacity>
-                            
-                            <Ionicons name="download-outline" size={24} color="black" style={styles.saveIcon}/>
-                        </View>
-                        <View style={styles.likesCont}>
-                            <Text style={styles.likeHeader}>Likes</Text>
-                            <Text style={styles.likes}>345</Text>
-                        </View>
-                        <TouchableOpacity onPress={() => navigation.navigate('postDetails', {
-                            extendedIngredients: item.extendedIngredients,
-                            analyzedInstructions: item.analyzedInstructions,
-                            imageURL: item.imageURL,
-                            description: item.description,
-                            title: item.title,
-                            userId: item.userId,
-                            username: item.username
-                        })}>
-                            <Feather name="book-open" size={24} color="black" />
-                        </TouchableOpacity>
-                    </View>
-                </View>             
-            </View>
-        )
-    }
 
     const ListFooter = () => {
         return(
             <View>
                 {
-                    loading && <ActivityIndicator />
-                }
-                {
-                    endReached &&
+                    loading ? <ActivityIndicator /> :
+                    posts.length == 0 ?
+                    <View style={styles.noPostsYetCont}>
+                        <Text style={styles.noPostsYetText}>No posts yet. Add Friends to see their posts!</Text>
+                    </View> :
+                    endReached ?
                     <View style={{alignItems: 'center'}}>
                         <AntDesign name="checkcircleo" size={30} color="green" />
                         <Text style={styles.listFooterTextStyle}>You have seen all posts</Text>
-                    </View>
+                    </View> :
+                    <View></View>
                 }
+                
             </View>
         )
     }
@@ -233,9 +159,10 @@ export default function FriendsPostFlatlist(){
             <FlatList 
             data={posts}
             keyExtractor={(item) => item.itemId}
-            renderItem={({item, index}) => renderFlatListItem({item, index})}
+            renderItem={({item, index}) => <RenderPostItem item={item} index={index}/>}
             contentContainerStyle={styles.flatlistStyle}
             onEndReached={() => GetPaginatedPosts(nextPage)}
+            onEndReachedThreshold={2}
             ListFooterComponent={() => <ListFooter />}
             />
         </SafeAreaView>
@@ -323,5 +250,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 60,
         marginTop: 20
+    },
+    noPostsYetCont: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: '50%',
+        padding: 100
+    },
+    noPostsYetText: {
+        textAlign: 'center',
+        fontSize: 20,
+        fontWeight: 'bold',
+        lineHeight: 30
     }
 })
