@@ -45,6 +45,7 @@ interface PostItem {
     itemId: string;
     username: string;
     likes: string[];
+    isLiked: boolean;
 }
 
 const { width, height } = Dimensions.get('window');
@@ -91,7 +92,6 @@ export default function FriendsPostFlatlist(){
                     console.log('then')
                     await axios.post(url, {data: lastVisible}).then(async response => {
                         const {error, userFriendsPosts, lastVisibleItem, endReached } = response.data
-                        
                         if(endReached){
                             console.log('End Reached')
                             setEndReached(true)

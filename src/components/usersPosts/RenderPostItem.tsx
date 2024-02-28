@@ -1,10 +1,11 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity } from "react-native";
 import { AntDesign, Ionicons, Feather } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { UsersPostsParams } from "../../navigation/UserPostsStack";
-
+import axios from "axios";
+import { CreateNewAccessToken } from "../auth/CheckAccessToken";
 
 type Ingredients = {
     amount: number,
@@ -29,11 +30,46 @@ interface PostItem {
     itemId: string;
     username: string;
     likes: string[];
+    isLiked: boolean;
 }
 
 const { width, height } = Dimensions.get('window');
 
 const RenderPostItem = ({item, index}: {item: PostItem, index: number}) => {
+    const [like, setLike] = useState(item.isLiked)
+
+    const HandleLike = (itemId: string) => {
+        setLike(() => !like)
+        axios.post("http://192.168.1.103:3000/user/posts/like", {itemId}).then(async (response: any) => {
+            const {error, message} = response.data;
+            if(error){
+                if(await CreateNewAccessToken()){
+                    axios.post("http://192.168.1.103:3000/user/posts/like", {itemId})
+                }
+                else {
+                    console.log("Something went wrong")
+                }
+            }
+        })
+        console.log("Add: ", itemId)
+    };
+    
+    const RemoveLike = (itemId: string) => {
+        setLike(() => !like)
+        axios.post("http://192.168.1.103:3000/user/posts/like/remove", {itemId}).then(async (response: any) => {
+            const {error, message} = response.data;
+            if(error){
+                if(await CreateNewAccessToken()){
+                    axios.post("http://192.168.1.103:3000/user/posts/like/remove", {itemId})
+                }
+                else {
+                    console.log("Something went wrong")
+                }
+            }
+        })
+        console.log("Remove: ", itemId)
+    };
+    
     const navigation = useNavigation<NativeStackNavigationProp<UsersPostsParams>>();
     return(
         <View style={styles.postCardCont}>
@@ -51,8 +87,8 @@ const RenderPostItem = ({item, index}: {item: PostItem, index: number}) => {
                 <Image source={{uri: item.imageURL}} style={styles.postImg}/>
                 <View style={styles.postStatsCont}>
                     <View style={styles.likeAndSaveCont}>
-                        <TouchableOpacity>
-                            <AntDesign name="like2" size={24} color="black" />
+                        <TouchableOpacity onPress={() => {like ? RemoveLike(item.itemId) : HandleLike(item.itemId)}}>
+                            <AntDesign name="like2" size={24} color={like ? 'red' : 'black'}/>
                         </TouchableOpacity>
                         
                         <Ionicons name="download-outline" size={24} color="black" style={styles.saveIcon}/>
