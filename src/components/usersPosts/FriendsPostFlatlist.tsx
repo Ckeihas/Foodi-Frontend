@@ -1,13 +1,8 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { View, StyleSheet, FlatList, Text, Image, Dimensions, SafeAreaView, TouchableOpacity, ActivityIndicator, Button } from "react-native";
 import { AntDesign, Ionicons, Feather } from '@expo/vector-icons';
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { UsersPostsParams } from "../../navigation/UserPostsStack";
-import userInfo from "../../mobx/UserInfo";
-import IsPostLiked from "../bottomSheet/addNewPostHelpers/IsPostLiked";
-import LikeThePost from "../bottomSheet/addNewPostHelpers/LikeThePost";
-import { ModifyMobxLikes } from "../bottomSheet/addNewPostHelpers/LikeThePost";
+
+
 import { observer } from "mobx-react";
 import axios from "axios";
 import * as SecureStore from 'expo-secure-store';
@@ -35,6 +30,12 @@ interface Instructions {
     step: string
   }
 
+interface SavedInfo {
+    isSaved: boolean,
+    saveDocPath: string,
+    docId: string
+}
+
 interface PostItem {
     imageURL: string;
     title: string;
@@ -46,6 +47,7 @@ interface PostItem {
     username: string;
     likes: string[];
     isLiked: boolean;
+    savedInfo: SavedInfo;
 }
 
 const { width, height } = Dimensions.get('window');

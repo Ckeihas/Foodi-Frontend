@@ -18,7 +18,13 @@ interface Instructions {
     id: string,
     number: number,
     step: string
-  }
+};
+
+interface SavedInfo {
+    isSaved: boolean,
+    saveDocPath: string,
+    docId: string
+};
 
 interface PostItem {
     imageURL: string;
@@ -31,14 +37,17 @@ interface PostItem {
     username: string;
     likes: string[];
     isLiked: boolean;
+    savedInfo: SavedInfo;
 }
 
 const { width, height } = Dimensions.get('window');
 
 const RenderPostItem = ({item, index}: {item: PostItem, index: number}) => {
-    const [like, setLike] = useState(item.isLiked)
+    const [like, setLike] = useState(item.isLiked);
+    const [save, setSave] = useState(item.savedInfo.isSaved)
 
     const HandleLike = (itemId: string) => {
+        
         setLike(() => !like)
         axios.post("http://192.168.1.103:3000/user/posts/like", {itemId}).then(async (response: any) => {
             const {error, message} = response.data;
@@ -69,6 +78,36 @@ const RenderPostItem = ({item, index}: {item: PostItem, index: number}) => {
         })
         console.log("Remove: ", itemId)
     };
+
+    const AddFavourite = (docPath: string) => {
+        setSave(() => !save)
+        axios.post("http://192.168.1.103:3000/user/posts/add/favourite", {docPath}).then(async (response: any) => {
+            const {error, message} = response.data;
+            if(error){
+                if(await CreateNewAccessToken()){
+                    axios.post("http://192.168.1.103:3000/user/posts/add/favourite", {docPath})
+                }
+                else {
+                    console.log("Something went wrong")
+                }
+            }
+        })
+    };
+    
+    const RemoveFavourite = (docPath: string, docId: string) => {
+        setSave(() => !save)
+        axios.post("http://192.168.1.103:3000/user/posts/remove/favourite", {docPath, docId}).then(async (response: any) => {
+            const {error, message} = response.data;
+            if(error){
+                if(await CreateNewAccessToken()){
+                    axios.post("http://192.168.1.103:3000/user/posts/remove/favourite", {docPath})
+                }
+                else {
+                    console.log("Something went wrong")
+                }
+            }
+        })
+    }
     
     const navigation = useNavigation<NativeStackNavigationProp<UsersPostsParams>>();
     return(
@@ -90,8 +129,9 @@ const RenderPostItem = ({item, index}: {item: PostItem, index: number}) => {
                         <TouchableOpacity onPress={() => {like ? RemoveLike(item.itemId) : HandleLike(item.itemId)}}>
                             <AntDesign name="like2" size={24} color={like ? 'red' : 'black'}/>
                         </TouchableOpacity>
-                        
-                        <Ionicons name="download-outline" size={24} color="black" style={styles.saveIcon}/>
+                        <TouchableOpacity onPress={() => {save ? RemoveFavourite(item.savedInfo.saveDocPath, item.savedInfo.docId) : AddFavourite(item.savedInfo.saveDocPath)}}>
+                            <Ionicons name="download-outline" size={24} color={save ? '#E5DB00' : 'black'} style={styles.saveIcon}/>
+                        </TouchableOpacity>                
                     </View>
                     <View style={styles.likesCont}>
                         <Text style={styles.likeHeader}>Likes</Text>

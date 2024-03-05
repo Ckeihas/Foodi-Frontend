@@ -3,7 +3,7 @@ import BottomTabNavigation from './BottomTabsNavigation';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import GroceryList from '../components/homeScreen/GroceryList';
 import MealPlanner from '../components/homeScreen/mealPlanner/MealPlanner';
-import Favourites from '../components/homeScreen/Favourites';
+import Favourites from '../components/homeScreen/favourites/Favourites';
 import GroceryListStack from './GroceryListStack';
 import Friends from '../components/homeScreen/Friends';
 import FriendsStack from './FriendsStack';
