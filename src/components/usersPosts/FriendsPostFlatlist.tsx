@@ -1,12 +1,15 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { View, StyleSheet, FlatList, Text, Image, Dimensions, SafeAreaView, TouchableOpacity, ActivityIndicator, Button } from "react-native";
 import { AntDesign, Ionicons, Feather } from '@expo/vector-icons';
+import SelectCollection from "../bottomSheet/addingFavourite/SelectCollection";
+
 
 
 import { observer } from "mobx-react";
 import axios from "axios";
 import * as SecureStore from 'expo-secure-store';
 import RenderPostItem from "./RenderPostItem";
+import {BottomSheetModal} from '@gorhom/bottom-sheet';
 
 
 type Ingredients = {
@@ -49,7 +52,11 @@ interface PostItem {
     isLiked: boolean;
     savedInfo: SavedInfo;
 }
-
+interface IPostInfo {
+    docPath: string,
+    docId: string,
+    imageUrl: string
+}
 const { width, height } = Dimensions.get('window');
 
 
@@ -58,7 +65,7 @@ export default function FriendsPostFlatlist(){
     const [lastVisible, setLastVisible] = useState<string>();
     const [loading, setLoading] = useState(false);
     const [endReached, setEndReached] = useState(false);
-   
+    const [pressedPost, setPressedPost] = useState<IPostInfo>();
 
     async function saveToSecureStorage(key: string, value: string): Promise<void> {
         await SecureStore.setItemAsync(key, value);
@@ -155,18 +162,27 @@ export default function FriendsPostFlatlist(){
             </View>
         )
     }
-    
+    const bottomSheetRef = useRef<BottomSheetModal>(null);
+    const openBottomSheet = () => bottomSheetRef.current?.present();
+    const closeBottomSheet = () =>  bottomSheetRef.current?.close();
+
+    const ToggleBottomSheet = ({postInfo}: {postInfo: IPostInfo}) => {
+        setPressedPost(postInfo)
+        openBottomSheet();
+    };
+
     return(
         <SafeAreaView style={styles.container}>
             <FlatList 
             data={posts}
             keyExtractor={(item) => item.itemId}
-            renderItem={({item, index}) => <RenderPostItem item={item} index={index}/>}
+            renderItem={({item, index}) => <RenderPostItem item={item} index={index} ToggleBottomSheet={ToggleBottomSheet}/>}
             contentContainerStyle={styles.flatlistStyle}
             onEndReached={() => GetPaginatedPosts(nextPage)}
             onEndReachedThreshold={2}
             ListFooterComponent={() => <ListFooter />}
             />
+            <SelectCollection ref={bottomSheetRef} closeBottomSheet={closeBottomSheet} title="" postInfo={pressedPost}/>
         </SafeAreaView>
     )
 };

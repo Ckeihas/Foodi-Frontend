@@ -10,6 +10,8 @@ import Animated, { useDerivedValue, useAnimatedStyle, withTiming } from "react-n
 import Svg, { Path } from "react-native-svg"
 import FindUsersStack from "./FindUsersStack";
 import UsersPostsStack from "./UserPostsStack";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+
 
 
 
@@ -142,6 +144,7 @@ const AnimatedTabBar = ({ state: { index: activeIndex, routes }, navigation, des
 export default function BottomTabNavigation(){
     return(
         <View style={{flex: 1}}>
+          <BottomSheetModalProvider>
             <Tab.Navigator 
             tabBar={(props) => <AnimatedTabBar {...props}
             />}
@@ -155,6 +158,7 @@ export default function BottomTabNavigation(){
                 <Tab.Screen name="posts" component={UsersPostsStack}/>
                 <Tab.Screen name="findUsers" component={FindUsersStack}/>
             </Tab.Navigator>
+            </BottomSheetModalProvider>
         </View>
     )
 };

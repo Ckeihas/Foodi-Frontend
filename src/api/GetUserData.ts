@@ -14,6 +14,8 @@ export async function GetUserData(){
         groceries.items = groceryLists
         userInfo.friends = friendsList
         userInfo.userFriendsPosts = userFriendsPosts
+
+
         userInfo.addUserData({
             id: id,
             username: username
@@ -26,3 +28,14 @@ export async function GetUserData(){
         console.log("Error testi Homescreen: ", err)
     })
 };
+
+export const GetCollectionTitles = async () => {
+    await axios.post("http://192.168.1.103:3000/user/favorites").then((response) => {
+        const getAllCollectionTitles = response.data.favoritePosts.map((item: any) => {
+            return {
+                title: item.collectionTitle
+            }
+        })
+        userInfo.collectionTitles = getAllCollectionTitles
+    })
+}

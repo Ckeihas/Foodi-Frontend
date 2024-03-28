@@ -35,6 +35,10 @@ interface IUserPosts {
     likes: string[];
 };
 
+interface ICollectionTitles {
+    title: string
+}
+
 const addNewRequest = (requests: IFriendRequests[], newRequest: IFriendRequests) => [
     ...requests,
     newRequest  
@@ -60,7 +64,7 @@ class UserInfo{
         username: ""
     };
     friends: User[] = [];
-    
+    collectionTitles: ICollectionTitles[] = [];
 
     constructor(){   
         makeAutoObservable(this)
@@ -72,6 +76,10 @@ class UserInfo{
 
     addFriendRequest(request: any) {
         this.friendRequests = request
+    };
+
+    addCollectionTitles(titles: ICollectionTitles[]){
+        this.collectionTitles = titles
     };
 
     newLike(likes: string[], newLike: string){

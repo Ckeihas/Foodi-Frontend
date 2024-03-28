@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useRef, useState } from "react";
 import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity } from "react-native";
 import { AntDesign, Ionicons, Feather } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
@@ -6,6 +6,9 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { UsersPostsParams } from "../../navigation/UserPostsStack";
 import axios from "axios";
 import { CreateNewAccessToken } from "../auth/CheckAccessToken";
+import BottomSheet from "@gorhom/bottom-sheet";
+import userInfo from "../../mobx/UserInfo";
+import { observer } from "mobx-react";
 
 type Ingredients = {
     amount: number,
@@ -40,11 +43,19 @@ interface PostItem {
     savedInfo: SavedInfo;
 }
 
+interface IBottomSheetFunc {
+    toggleBottomSheet: () => void | undefined;
+}
+
 const { width, height } = Dimensions.get('window');
 
-const RenderPostItem = ({item, index}: {item: PostItem, index: number}) => {
+const RenderPostItem = ({item, index, ToggleBottomSheet}: {item: PostItem, index: number, ToggleBottomSheet: any}) => {
     const [like, setLike] = useState(item.isLiked);
     const [save, setSave] = useState(item.savedInfo.isSaved)
+    const [showBottomSheet, setShowBottomSheet] = useState(false)
+
+    const navigation = useNavigation<NativeStackNavigationProp<UsersPostsParams>>();
+    const collectionTitle = "breakfast";
 
     const HandleLike = (itemId: string) => {
         
@@ -79,28 +90,38 @@ const RenderPostItem = ({item, index}: {item: PostItem, index: number}) => {
         console.log("Remove: ", itemId)
     };
 
-    const AddFavourite = (docPath: string) => {
-        setSave(() => !save)
-        axios.post("http://192.168.1.103:3000/user/posts/add/favourite", {docPath}).then(async (response: any) => {
-            const {error, message} = response.data;
-            if(error){
-                if(await CreateNewAccessToken()){
-                    axios.post("http://192.168.1.103:3000/user/posts/add/favourite", {docPath})
-                }
-                else {
-                    console.log("Something went wrong")
-                }
+    const AddFavourite = async (docPath: string, docId: string, collectionTitle: string) => {
+       setSave(() => !save)
+       const data = {
+        docPath: docPath,
+        docId: docId,
+        collectionTitle: collectionTitle
+        }   
+       await axios.post("http://192.168.1.103:3000/user/posts/add/favourite", {data: data}).then(async (response: any) => {
+        const {error, message} = response.data;
+        if(error){
+            if(await CreateNewAccessToken()){
+                await axios.post("http://192.168.1.103:3000/user/posts/add/favourite", {data: data})
             }
-        })
+            else {
+                console.log("Something went wrong")
+            }
+        }
+    })
     };
     
-    const RemoveFavourite = (docPath: string, docId: string) => {
+    const RemoveFavourite = async (docPath: string, docId: string) => {
+        const data = {
+            docPath: docPath,
+            docId: docId,
+        }
         setSave(() => !save)
-        axios.post("http://192.168.1.103:3000/user/posts/remove/favourite", {docPath, docId}).then(async (response: any) => {
+
+        await axios.post("http://192.168.1.103:3000/user/posts/remove/favourite", {data: data}).then(async (response: any) => {
             const {error, message} = response.data;
             if(error){
                 if(await CreateNewAccessToken()){
-                    axios.post("http://192.168.1.103:3000/user/posts/remove/favourite", {docPath})
+                   await axios.post("http://192.168.1.103:3000/user/posts/remove/favourite", {data: data})
                 }
                 else {
                     console.log("Something went wrong")
@@ -109,7 +130,10 @@ const RenderPostItem = ({item, index}: {item: PostItem, index: number}) => {
         })
     }
     
-    const navigation = useNavigation<NativeStackNavigationProp<UsersPostsParams>>();
+    const bottomSheetRef = useRef<BottomSheet>(null);
+    const openBottomSheet = () => bottomSheetRef.current?.snapToIndex(0);
+    const closeBottomSheet = () =>  bottomSheetRef.current?.close();
+
     return(
         <View style={styles.postCardCont}>
             <View style={styles.postContents}>
@@ -129,7 +153,22 @@ const RenderPostItem = ({item, index}: {item: PostItem, index: number}) => {
                         <TouchableOpacity onPress={() => {like ? RemoveLike(item.itemId) : HandleLike(item.itemId)}}>
                             <AntDesign name="like2" size={24} color={like ? 'red' : 'black'}/>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => {save ? RemoveFavourite(item.savedInfo.saveDocPath, item.savedInfo.docId) : AddFavourite(item.savedInfo.saveDocPath)}}>
+                        {/* {save ? RemoveFavourite(item.savedInfo.saveDocPath, item.savedInfo.docId) : AddFavourite(item.savedInfo.saveDocPath, item.savedInfo.docId, collectionTitle)} */}
+                        <TouchableOpacity onPress={() => {
+                            if (save) {
+                                RemoveFavourite(item.savedInfo.saveDocPath, item.savedInfo.docId);
+                            } else {
+                                ToggleBottomSheet({
+                                    postInfo: {
+                                        imageUrl: item.imageURL,
+                                        docPath: item.savedInfo.saveDocPath, 
+                                        docId: item.savedInfo.docId
+                                    }
+                                });
+                                AddFavourite(item.savedInfo.saveDocPath, item.savedInfo.docId, '');
+                            }
+                        }}
+                        >
                             <Ionicons name="download-outline" size={24} color={save ? '#E5DB00' : 'black'} style={styles.saveIcon}/>
                         </TouchableOpacity>                
                     </View>
@@ -149,7 +188,7 @@ const RenderPostItem = ({item, index}: {item: PostItem, index: number}) => {
                         <Feather name="book-open" size={24} color="black" />
                     </TouchableOpacity>
                 </View>
-            </View>             
+            </View>
         </View>
     )
 };

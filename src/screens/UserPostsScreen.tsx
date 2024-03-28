@@ -1,21 +1,10 @@
 import React, { useRef, useState } from "react";
 import { View, Text, StyleSheet, Button, TextInput, TouchableOpacity, Image  } from "react-native";
-import { Modal } from "../components/PopupModal";
 import { theme } from "../theme/theme";
-import { Feather, FontAwesome } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker'
-import { getStorage, ref, uploadBytesResumable, uploadString, getDownloadURL } from "firebase/storage";
-import {addDoc, collection, onSnapshot} from "firebase/firestore"
-import { storage } from "../firebase/config";
-import { db } from "../firebase/config";
 import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
-import userInfo from "../mobx/UserInfo";
 import { AddNewPostBottomSheet } from "../components/bottomSheet/AddNewPostBottomSheet";
 import BottomSheet from "@gorhom/bottom-sheet";
 import FriendsPostFlatlist from "../components/usersPosts/FriendsPostFlatlist";
-import axios from "axios";
-import * as SecureStore from 'expo-secure-store';
 
 type Ingredients = {
     amount: number,

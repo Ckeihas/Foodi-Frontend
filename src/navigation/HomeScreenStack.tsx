@@ -8,6 +8,7 @@ import GroceryListStack from './GroceryListStack';
 import Friends from '../components/homeScreen/Friends';
 import FriendsStack from './FriendsStack';
 import MealPlannerStack from './MealPlannerStack';
+import FavoritesStack from './FavoritesStack';
 
 const options: StackNavigationOptions = {
   headerShown: false,
@@ -34,7 +35,7 @@ export default function HomeScreenStack(): JSX.Element{
             <Stack.Screen name="homeScreen" component={BottomTabNavigation}/>
             <Stack.Screen name="groceryStack" component={GroceryListStack}/>
             <Stack.Screen name="mealPlanner" component={MealPlannerStack}/>
-            <Stack.Screen name="favourites" component={Favourites}/> 
+            <Stack.Screen name="favourites" component={FavoritesStack}/> 
             <Stack.Screen name='friends' component={FriendsStack}/>         
         </Stack.Navigator>
        
